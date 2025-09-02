@@ -1,10 +1,10 @@
-# codemagic.yaml
 workflows:
   flutter-ios-workflow:
     name: Flutter iOS Build
     environment:
       groups:
         - app_credentials # Группа для сертификатов и профилей
+        - firebase_vars # Добавьте эту группу для Firebase переменных
       vars:
         BUNDLE_ID: "com.satka.taxi.rider" # Ваш bundle id
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
@@ -25,21 +25,22 @@ workflows:
         script: |
           flutter --version
           flutter pub get
-          
+
+      - name: Set Firebase app ID
+        script: |
+          mkdir -p ios
+          echo '{"app_id": "$FIREBASE_APP_ID"}' > ios/firebase_app_id_file.json
+          echo "Firebase config file created:"
+          cat ios/firebase_app_id_file.json
+
       - name: Build iOS
         script: |
           flutter build ipa --release --no-codesign
-          
-       - name: Set Firebase app ID
-        script: |
-      # Установить переменную окружения
-      export FIREBASE_APP_ID="1:912880218902:ios:937559f1329e0c9c339637"
 
       - name: Code signing
         script: |
           # Создание директории для экспорта
           mkdir -p build/ios/ipa
-
           # Копирование .ipa файла
           cp build/ios/ipa/*.ipa build/ios/ipa/app.ipa
 
