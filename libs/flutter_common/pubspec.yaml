@@ -1,0 +1,55 @@
+name: flutter_common
+description: A new Flutter package project.
+version: 0.0.1
+publish_to: "none"
+
+environment:
+  sdk: ">=3.6.0 <4.0.0"
+  flutter: "^3.27.0"
+
+dependencies:
+  dartz: ^0.10.1
+  flutter:
+    sdk: flutter
+  freezed_annotation: ^2.4.1
+  intl: any
+  ionicons: ^0.2.2
+  latlong2: ^0.9.1
+  generic_map:
+    path: ../generic_map
+  flutter_localizations:
+    sdk: flutter
+  cached_network_image: ^3.3.0
+  json_annotation: ^4.8.1
+  dotted_border: ^2.1.0
+  image_picker: ^1.1.2
+  collection: ^1.17.2
+  pinput: ^5.0.0
+  flutter_dotenv: ^5.2.1
+  auto_route: any # Navigator's pop function is not working properly with auto_route navigation
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  build_runner: ^2.4.6
+  flutter_lints: ^5.0.0
+  freezed: ^2.4.6
+  json_serializable: ^6.7.1
+  flutter_gen_runner: ^5.3.2
+  flutter_gen: ^5.3.2
+
+# dependency_overrides:
+#   geolocator: ^12.0.0
+#   flutter_map: ^7.0.0
+
+flutter:
+  generate: true
+
+  assets:
+    - assets/avatars/
+    - assets/countries/
+    - assets/images/
+
+flutter_gen:
+  integrations:
+    lottie: true

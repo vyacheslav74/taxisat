@@ -1,0 +1,117 @@
+{
+  "dart.flutterSdkPath": ".fvm/versions/3.24.3",
+  "search.exclude": {
+    "**/.fvm": true
+  },
+  "files.watcherExclude": {
+    "**/.fvm": true
+  },
+  "files.exclude": {
+    ".idea": true,
+    ".dart_tool": true,
+    ".fvm": true,
+    ".vscode": true,
+    "build": true,
+    ".flutter-plugins": true,
+    ".flutter-plugins-dependencies": true,
+    ".metadata": true,
+    ".packages": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "**/Thumbs.db": true
+  },
+  "[dart]": {
+    "editor.formatOnSave": true,
+    "editor.formatOnType": true,
+    "editor.rulers": [
+      159
+    ],
+    "editor.suggestSelection": "first",
+    "editor.tabCompletion": "off",
+    "editor.wordWrap": "bounded",
+    "diffEditor.wordWrap": "off",
+    "editor.wordWrapColumn": 121,
+    "editor.overviewRulerBorder": false,
+    "editor.matchBrackets": "near"
+  },
+  "explorer.fileNesting.enabled": true,
+  "explorer.fileNesting.patterns": {
+    "pubspec.yaml": "pubspec.lock,pubspec_overrides.yaml,.packages,.flutter-plugins,.flutter-plugins-dependencies,.metadata",
+    "*.dart": "${capture}.g.dart,${capture}.freezed.dart,${capture}.prod.dart,${capture}.test.dart,${capture}.dev.dart,${capture}.gr.dart,${capture}.mock.dart,${capture}.staging.dart,${capture}.desktop.dart,${capture}.mobile.dart,${capture}.event.dart,${capture}.state.dart,${capture}.extensions.dart,${capture}.models.dart"
+  },
+  "dart.lineLength": 121,
+  "flutterTranslator.config": {
+    "arbConfig": {
+      "prefix": "intl_",
+      "sourcePath": "/Users/manlyman/ridy-monorepo/libs/flutter_common/lib/l10n/intl_en.arb",
+      "exclude": [],
+      "custom": {}
+    },
+    // Remove from file watching
+    "files.watcherExclude": {
+        "**/.fvm": true
+    },
+    "files.exclude": {
+        ".idea": true,
+        ".dart_tool": true,
+        ".fvm": true,
+        ".vscode": true,
+        "build": true,
+        ".flutter-plugins": true,
+        ".flutter-plugins-dependencies": true,
+        ".metadata": true,
+        ".packages": true,
+        "**/.git": true,
+        "**/.svn": true,
+        "**/.hg": true,
+        "**/CVS": true,
+        "**/.DS_Store": true,
+        "**/Thumbs.db": true
+    },
+    "[dart]": {
+        "editor.formatOnSave": true,
+        "editor.formatOnType": true,
+        "editor.rulers": [
+            159
+        ],
+        "editor.suggestSelection": "first",
+        "editor.tabCompletion": "off",
+        "editor.wordWrap": "bounded",
+        "diffEditor.wordWrap": "off",
+        "editor.wordWrapColumn": 121,
+        "editor.overviewRulerBorder": false,
+        "editor.matchBrackets": "near",
+    },
+    "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.patterns": {
+        "pubspec.yaml": "pubspec.lock,pubspec_overrides.yaml,.packages,.flutter-plugins,.flutter-plugins-dependencies,.metadata",
+        "*.dart": "${capture}.g.dart,${capture}.freezed.dart,${capture}.prod.dart,${capture}.test.dart,${capture}.dev.dart,${capture}.gr.dart,${capture}.mock.dart,${capture}.staging.dart,${capture}.desktop.dart,${capture}.mobile.dart,${capture}.event.dart,${capture}.state.dart,${capture}.extensions.dart,${capture}.models.dart"
+    },
+    "dart.lineLength": 121,
+    "flutterTranslator.config": {
+        "arbConfig": {
+            "prefix": "intl_",
+            "sourcePath": "/Users/manlyman/ridy-monorepo/libs/flutter_common/lib/l10n/intl_en.arb",
+            "exclude": [],
+            "custom": {}
+        },
+        "googleAuthConfig": {
+            "apiKey": "",
+            "credential": ""
+        },
+        "googleSheetConfig": {
+            "id": "",
+            "name": "",
+            "exclude": []
+        }
+    },
+    "googleSheetConfig": {
+      "id": "",
+      "name": "",
+      "exclude": []
+    }
+  }
+}

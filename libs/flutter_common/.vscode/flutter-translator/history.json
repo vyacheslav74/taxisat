@@ -1,0 +1,478 @@
+{
+  "description": "This file is for tracking changes to the source arb file in the ArbTranslator extension. (https://marketplace.visualstudio.com/items?itemName=DevStory.flutter-translator)",
+  "data": {
+    "@@locale": "en",
+    "copyright_notice": "Copyright © {company}, All rights reserved.",
+    "@copyright_notice": {
+      "placeholders": {
+        "company": {}
+      }
+    },
+    "welcomeTitle": "Welcome to the app",
+    "today": "Today",
+    "yesterday": "Yesterday",
+    "settings": "Settings",
+    "about": "About",
+    "profileInfo": "Profile info",
+    "language": "Language",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "mobileNumber": "Mobile number",
+    "edit": "Edit",
+    "enterCode": "Enter code",
+    "editProfile": "Edit profile",
+    "bankTransfer": "Bank Transfer",
+    "gift": "Gift",
+    "correction": "Correction",
+    "inappPayment": "In-app payment",
+    "orderFee": "Order fee",
+    "parkingFee": "Parking fee",
+    "cancellationFee": "Cancellation fee",
+    "withdraw": "Withdraw",
+    "walletTransactions": "Wallet transactions",
+    "addCard": "Add card",
+    "visa": "Visa",
+    "mastercard": "Mastercard",
+    "addBalance": "Add balance",
+    "durationInMinutes": "{minutes, plural, =0{Zero minutes} =1{{minutes} Minute} other{{minutes} Minutes}}",
+    "@durationInMinutes": {
+      "placeholders": {
+        "minutes": {
+          "type": "num",
+          "format": "compact"
+        }
+      }
+    },
+    "durationInHours": "Duration: {hours, plural, =0{Zero hours} =1{{hours} Hour} other{{hours} Hours}}",
+    "@durationInHours": {
+      "placeholders": {
+        "hours": {
+          "type": "num",
+          "format": "compact"
+        }
+      }
+    },
+    "timePastDue": "Past due",
+    "justNow": "Just Now",
+    "distanceInMeters": "{distance} m",
+    "@distanceInMeters": {
+      "placeholders": {
+        "distance": {
+          "type": "num",
+          "format": "compact"
+        }
+      }
+    },
+    "distanceInKilometers": "{distance} km",
+    "@distanceInKilometers": {
+      "placeholders": {
+        "distance": {
+          "type": "num",
+          "format": "compact"
+        }
+      }
+    },
+    "welcomeSubtitle": "Taxi service designed for your comfort have Trips with your favorite drivers and select your ride preferences",
+    "onboardingRewardTitle": "Get rewarded!",
+    "onboardingRewardSubtitle": "Get extra bonuses for referring a friend, completing trips and many more...",
+    "selectLanguage": "Select language",
+    "searchForLanguage": "Search for language",
+    "enterPhoneNumber": "Enter Phone Number",
+    "actionContinue": "Continue",
+    "whereIsYourDestination": "Where is your destination?",
+    "whereAreYouGoing": "Where are you going?",
+    "selectDestinations": "Your route",
+    "pickupPoint": "Pick-up point",
+    "enterPickupPoint": "Enter pick-up point",
+    "dropoffPoint": "Drop-off point",
+    "enterDropoffPoint": "Enter drop-off point",
+    "stopPoint": "Stop point",
+    "enterStopPoint": "Enter stop point",
+    "confirm": "Confirm",
+    "confirmDropoff": "Confirm drop-off",
+    "confirmPickup": "Confirm pick-up",
+    "enterAtLeast3Characters": "Enter at least 3 characters",
+    "noResults": "No results",
+    "bookNow": "Book Now",
+    "cash": "Cash",
+    "online": "Online",
+    "offline": "Offline",
+    "onTrip": "On Trip",
+    "confirmPay": "Confirm & Pay",
+    "cancel": "Cancel",
+    "apply": "Apply",
+    "enterCouponCode": "Enter coupon code",
+    "reserveRide": "Reserve ride",
+    "reserveRideMessage": "Select the exact date and time you wish your ride to be reserved",
+    "reserveRideMessageSuccess": "Your ride has been reserved successfully. You can view your reserved rides in the 'Scheduled rides' section.",
+    "cancelReservation": "Cancel reservation",
+    "confirmResrve": "Confirm & resrve",
+    "enterCouponDescription": "Insert your coupon code to be applied on prices",
+    "enterCoupon": "Enter coupon",
+    "couponApplied": "Coupon applied",
+    "couponAppliedDescription": "Coupon has been applied to your ride's fare",
+    "done": "Done!",
+    "ridePreferences": "Ride Preferences",
+    "noWaitTime": "No wait time",
+    "minutesRange": "{minutes} minutes",
+    "@minutesRange": {
+      "placeholders": {
+        "minutes": {
+          "type": "String"
+        }
+      }
+    },
+    "secondsRange": "{seconds} seconds",
+    "@secondsRange": {
+      "placeholders": {
+        "seconds": {
+          "type": "String"
+        }
+      }
+    },
+    "rideRequested": "Ride requested",
+    "searchingForAnOnlineDriver": "Searching for an online driver...",
+    "cancelRide": "Cancel ride",
+    "rideSafety": "Ride Safety",
+    "shareTripInformation": "Share trip information",
+    "shareTripInformationDescription": "You can share your trip info with a friend",
+    "sos": "SOS",
+    "sosDescription": "Let authorities know of an emergency",
+    "reportAnIssue": "Report an issue",
+    "reportAnIssueMidTripDescription": "Share a safety issue on-trip",
+    "rideOptions": "Ride options",
+    "goBackToRide": "Go back to ride",
+    "waitTime": "Wait time",
+    "couponCode": "Coupon code",
+    "giftCardCode": "Gift card code",
+    "nicePoints": "Nice points",
+    "negativePoints": "Negative Points",
+    "reviewCommentBoxHint": "Add a comment...",
+    "howWasYourTrip": "How was your trip?",
+    "oneStarReviewTitle": "Terrible trip with {name}",
+    "@oneStarReviewTitle": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "twoStarReviewTitle": "Bad trip with {name}",
+    "@twoStarReviewTitle": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "threeStarReviewTitle": "Average trip with {name}",
+    "@threeStarReviewTitle": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "fourStarReviewTitle": "Good trip with {name}",
+    "@fourStarReviewTitle": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "fiveStarReviewTitle": "Awesome trip with {name}",
+    "@fiveStarReviewTitle": {
+      "placeholders": {
+        "name": {
+          "type": "String"
+        }
+      }
+    },
+    "submitFeedback": "Submit feedback",
+    "typeAMessage": "Type a message",
+    "findAnotherRide": "Find another ride",
+    "next": "Next",
+    "searchForDropoffLocation": "Search for drop-off location",
+    "searchForPickupLocation": "Search for pick-up location",
+    "placeConfirmDialogPlaceholder": "Where is your drop off location?",
+    "noAnnouncements": "No announcements",
+    "announcements": "Announcements",
+    "reviewsCount": "({count} reviews)",
+    "@reviewsCount": {
+      "placeholders": {
+        "count": {
+          "type": "int"
+        }
+      }
+    },
+    "tripDetails": "Trip details",
+    "rideDetails": "Ride details",
+    "orderARide": "Order a ride",
+    "noRidesYet": "No rides yet!",
+    "issueSubjectPlaceholder": "Type the subject of the issue",
+    "issueContentPlaceholder": "Type the description of the issue",
+    "reportThisIssue": "Report this issue",
+    "fieldIsRequired": "Field is required",
+    "ok": "OK",
+    "favoriteLocations": "Favorite locations",
+    "favoriteLocationsSubtitle": "Save your favorite locations for easier access",
+    "createAFavoriteLocation": "Create a favorite location",
+    "addressTitleLabel": "Address's title",
+    "clickToSetLocation": "Click to set location",
+    "whereIsYourNewFavoriteLocation": "Where is your new favorite location?",
+    "locateFavoriteLocationDescription": "Use either search box below or the map to pin the exact location",
+    "searchLocation": "Search location",
+    "saveChanges": "Save changes",
+    "rideHistory": "Ride History",
+    "scheduledRides": "Scheduled rides",
+    "keepTheOrder": "Keep the order",
+    "cancelTheRide": "Cancel the ride",
+    "walletBalance": "Wallet balance",
+    "activities": "Activities",
+    "pleaseEnterGiftCardCode": "Please enter gift card code",
+    "redeem": "Redeem",
+    "enterGiftCardCode": "Enter gift card code",
+    "redeemGiftCard": "Redeem Gift Card",
+    "redeemGiftCardDescription": "Enter your gift card code to redeem it.",
+    "redeemSuccessTitle": "Gift Card Redeemed!",
+    "redeemSuccessDescription": "You have successfully redeemed {amount} gift card.",
+    "@redeemSuccessDescription": {
+      "placeholders": {
+        "amount": {
+          "type": "String"
+        }
+      }
+    },
+    "addCredit": "Add credit",
+    "payNow": "Pay now",
+    "addCreditToWallet": "Add credit to wallet",
+    "pleaseSelectAmount": "Please select amount",
+    "enterAmount": "Enter amount",
+    "selectAmount": "Select amount:",
+    "wallet": "Wallet",
+    "totalRides": "Total rides",
+    "appSettings": "App Settings",
+    "mapSettings": "Map Settings",
+    "lanugageSettings": "Lanugage Settings",
+    "paymentMethods": "Payment methods",
+    "selectCards": "Select cards",
+    "selectCardsDescription": "You can select the card numbers you would like to be displayed in the list of payment methods on invoices.",
+    "delete": "Delete",
+    "nameOnCard": "Name on card",
+    "profile": "Profile",
+    "scheduledRide": "Scheduled ride",
+    "addPaymentMethod": "Add Payment Method",
+    "addPaymentMethodDescription": "Add a new payment method to your account",
+    "saveCard": "Save card",
+    "selectDialCode": "Select dial code",
+    "searchCountryName": "Search country name",
+    "preferences": "Preferences:",
+    "onboardingDescription": "Moments away from registering your account and enjoying comfortable rides",
+    "signInSignUp": "Sign in/ Sign up",
+    "enterOtp": "Enter OTP",
+    "enterPassword": "Enter Password",
+    "enterPasswordDescription": "Please enter your password to continue",
+    "setPassword": "Set Password",
+    "password": "Password",
+    "passwordRuleDescription": "Include at least two of the following:",
+    "passwordRuleLength": "Between 9 and 64 characters",
+    "passwordRuleUpperCase": "Uppercase letters",
+    "passwordRuleLowerCase": "Lowercase letters",
+    "passwordRuleNumber": "Numbers",
+    "passwordRuleSpecialCharacter": "Special characters",
+    "contactDetails": "Contact Details",
+    "vehicleDetails": "Vehicle Details",
+    "payoutInformation": "Payout Information",
+    "documents": "Documents",
+    "accessDenied": "Access Denied",
+    "success": "Success",
+    "skipForNow": "Skip for now",
+    "sendOtpDescription": "A verification code has been sent to your phone number",
+    "resendOtp": "Resend code",
+    "useOtpInstead": "Use OTP instead",
+    "home": "Home",
+    "logout": "Logout",
+    "driverLicenseNumber": "Driver License Number",
+    "email": "E-mail",
+    "address": "Address",
+    "gender": "Gender",
+    "genderMale": "Male",
+    "genderFemale": "Female",
+    "genderUnknown": "Neutral / Unknown",
+    "vehiclePlateNumber": "Vehicle Plate Number",
+    "vehicleColor": "Vehicle Color",
+    "vehicleModelAndMake": "Vehicle Model & Make",
+    "vehicleProductionYear": "Vehicle production year",
+    "bankName": "Bank Name",
+    "bankRoutingNumber": "Bank Routing Number",
+    "bankAccountNumber": "Bank Account Number",
+    "bankSwift": "SWIFT Code",
+    "uploadImage": "Upload Image",
+    "yourBalance": "Your balance",
+    "rideCancellation": "Ride Cancellation",
+    "cancelRideMessage": "Are you sure you want to cancel your ride?",
+    "cancelRideSuccess": "Ride has been canceled successfully",
+    "confirmAndCancelRide": "Confirm & Cancel the ride",
+    "selectPaymentMethod": "Select payment method",
+    "rideFeePaid": "Ride's fee has been paid",
+    "rideFeeUnpaid": "Ride's fee hasn't been paid yet",
+    "total": "Total",
+    "totalPrice": "Total Price",
+    "addCustomCredit": "Add custom redit",
+    "serviceFee": "Service Fee",
+    "serviceOptionFee": "Service Option Fee",
+    "couponDiscount": "Coupon Discount",
+    "walletCreit": "Wallet Credit",
+    "custom": "Custom",
+    "payment": "Payment",
+    "cashPayment": "Cash payment",
+    "cashPaymentDescription": "Do you confirm that you received {amount}?",
+    "@cashPaymentDescription": {
+      "placeholders": {
+        "amount": {
+          "type": "String"
+        }
+      }
+    },
+    "cashPaymentReceived": "Cash payment received",
+    "confirmAndEndTrip": "Confirm & End Trip",
+    "earnings": "Earnings",
+    "acceptOrder": "Accept order",
+    "canceled": "Canceled",
+    "unknown": "Unknown",
+    "commission": "Commission",
+    "selectProfileImage": "Select Profile Image",
+    "chooseAvatarDescription": "Or select an avatar from the list below:",
+    "fullName": "Full name",
+    "favoriteDrivers": "Favorite Drivers",
+    "distanceTraveled": "Distance traveled",
+    "rating": "Rating",
+    "map": "Map",
+    "income": "Income",
+    "timeSpent": "Time spent",
+    "daily": "Daily",
+    "monthly": "Monthly",
+    "noRecordsFoundEarnings": "No trip record found for these filters",
+    "feedbacksSummaryEmptyStateHeading": "No feedbacks yet",
+    "feedbacksSummaryEmptyStateTitle": "You don't have enough feedbacks to show yet.",
+    "feedbacksSummary": "Feedbacks Summary",
+    "feedbacksGoodTitle": "Exccelent Job!",
+    "feedbacksGoodSubtitle": "Your ratings are looking good so far",
+    "feedbacksBadTitle": "Average",
+    "feedbacksBadSubtitle": "You can use some improvements",
+    "feedbacksGoodPointsTitle": "Some good points about you:",
+    "feedbacksbadPointsTitle": "Some points you can improve:",
+    "feedbacksReviewsTitle": "Some earlier reviews",
+    "payoutMethods": "Payout Methods",
+    "notice": "Notice:",
+    "payoutNoticeTitle": "You will automatically be paid by the admin twice a week.",
+    "addPayoutMethod": "Add payout Method",
+    "navigate": "Navigate",
+    "noPayoutMethods": "No payout methods",
+    "name": "Name",
+    "nameHint": "Enter name",
+    "bankNameHint": "Enter Bank name",
+    "branchName": "Branch Name",
+    "branchNameHint": "Enter Branch Name",
+    "accountHolderName": "Account Holder name",
+    "routingNumber": "Routing Number",
+    "routingNumberHint": "Enter routing number",
+    "accountNumber": "Account Number",
+    "accountNumberHint": "Enter account number",
+    "addressHint": "Enter address",
+    "dateOfBith": "Date of birth",
+    "yearHint": "Year",
+    "monthHint": "Month",
+    "dayHint": "Day",
+    "city": "City",
+    "cityHint": "Enter city",
+    "state": "State",
+    "stateHint": "Enter State",
+    "zipCode": "Zip Code",
+    "zipCodeHint": "Enter Zip Code",
+    "day": "Day",
+    "month": "Month",
+    "year": "Year",
+    "noActivitiesYet": "No Activities yet.",
+    "headingToDestination": "heading to the destination",
+    "driverArrivedNotice": "Driver is waiting for you",
+    "driverShouldAriveInNotice": "Driver is estimated to arrive in",
+    "driverShouldHaveArrivedNotice": "Driver should be arriving in any moment now",
+    "deleteAccount": "Delete Account",
+    "deleteAccountNotice": "Are you sure you want to delete your account? After 30 days, your account will be permanently deleted. During this time, you can restore your account by signing in again.",
+    "confirmAndDeleteAccount": "Confirm & delete account",
+    "accountDeleted": "Account has been deleted",
+    "share_trip_text_locations": "I am on my way to {destination} from {pickup}.",
+    "@share_trip_text_locations": {
+      "placeholders": {
+        "destination": {},
+        "pickup": {}
+      }
+    },
+    "share_trip_text_driver": " My driver name is {firstName} {lastName}, the mobile number is +{mobileNumber}.",
+    "@share_trip_text_driver": {
+      "placeholders": {
+        "firstName": {},
+        "lastName": {},
+        "mobileNumber": {}
+      }
+    },
+    "share_trip_text_rider": " The rider with me name is {firstName} {lastName}, the mobile number is +{mobileNumber}.",
+    "@share_trip_text_rider": {
+      "placeholders": {
+        "firstName": {},
+        "lastName": {},
+        "mobileNumber": {}
+      }
+    },
+    "share_trip_started_time": " Trip has started on {startTime} and I expect the trip to take approximately {duration} minutes",
+    "@share_trip_started_time": {
+      "placeholders": {
+        "startTime": {},
+        "duration": {}
+      }
+    },
+    "share_trip_not_arrived_time": " I expect the trip to take approximately {duration} minutes once I get into the driver's car.",
+    "@share_trip_not_arrived_time": {
+      "placeholders": {
+        "duration": {}
+      }
+    },
+    "sendSOSMessage": "IMPORTANT: Please use this feature only in case of emergency. We will contact authorities in behalf of you.",
+    "confirmAndSendSOS": "Confirm & Send SOS",
+    "sosSentSuccessfully": "SOS has been sent successfully",
+    "topUpSuccess": "Wallet has been topped up successfully",
+    "cancelNotAllowed": "Cancellation of an already started ride is not possible.",
+    "error": "Error",
+    "connectionError": "Connection error",
+    "serverError": "Server error",
+    "addNewLocation": "Add new location",
+    "twoWayTrip": "Two-way trip",
+    "reportSubmitted": "Report Submitted",
+    "reportSubmittedDescription": "Your report has been submitted successfully, we will review it and take the necessary actions.",
+    "cardNumber": "Card number",
+    "cardNumberHint": "Enter card number",
+    "expiryDate": "Expiry date",
+    "expiryDateHint": "MM/YY",
+    "noFavoriteDrivers": "No favorite drivers",
+    "noFavoriteDriversDescription": "You can mark your preferred drivers as favorites when rating them after the trip.",
+    "pickupLocationNotFound": "We were unable to determine your current location using GPS as pickup point. Please enter your pickup point manually.",
+    "dragToSelect": "Drag to select",
+    "skip": "Skip",
+    "openSettings": "Open Settings",
+    "locationPermission": "Location permission",
+    "locationPermissionDeniedForeverMessage": "Location permission is a requirement for receiving orders around you and also for rider to track your location. You can not receive orders without this permission and us being beware of your current location. You can change this permission in your phone settings.",
+    "allow": "Allow",
+    "driverOnlineTitle": "Searching for a ride",
+    "driverOfflineTitle": "Get online to start receiving requests",
+    "payInCash": "Cash payment",
+    "payInCashDescription": "Please proceed with the cash payment to the driver. The driver will confirm the payment once received.",
+    "addToFavoriteDrivers": "Add to favorite drivers",
+    "slideToConfirmArrival": "Slide to confirm arrival",
+    "slideToConfirmPickup": "Slide to confirm pickup",
+    "slideToConfirmDropoff": "Slide to confirm drop-off",
+    "noticePickingUpRiderIn": "Picking up the rider in:",
+    "noticeRiderNotified": "Rider has been notified, Pickup the rider and start the ride"
+  }
+}

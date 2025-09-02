@@ -1,0 +1,7 @@
+targets:
+  $default:
+    sources:
+      - pubspec.yaml
+      - $package$
+      - assets/**
+      - lib/**
