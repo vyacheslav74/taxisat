@@ -1,4 +1,4 @@
-arb-dir: ../../libs/flutter_common/lib/l10n
+arb-dir: /libs/flutter_common/lib/l10n
 output-dir: lib/l10n
 template-arb-file: intl_en.arb
 output-localization-file: messages.dart
