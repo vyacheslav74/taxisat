@@ -26,10 +26,7 @@ workflows:
           flutter --version
           flutter pub get
 
-      - name: Set Firebase app ID
-        script: |
-           # Установить переменную окружения
-          export FIREBASE_APP_ID="1:912880218902:ios:937559f1329e0c9c339637"   
+     
 
       - name: Build iOS
         script: |
