@@ -32,6 +32,12 @@ workflows:
         script: |
           flutter build ipa --release --no-codesign
 
+
+       - name: Set Firebase app ID
+        script: |
+      # Установить переменную окружения
+      export FIREBASE_APP_ID="1:912880218902:ios:937559f1329e0c9c339637"
+
       - name: Code signing
         script: |
           # Создание директории для экспорта
