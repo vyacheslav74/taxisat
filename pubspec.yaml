@@ -61,9 +61,9 @@ dependencies:
   fl_chart: ^0.64.0
   dotted_border: ^2.1.0
   generic_map:
-    path: /libs/generic_map
+    path: libs/generic_map
   flutter_common:
-    path: /libs/flutter_common
+    path: libs/flutter_common
   lottie: ^3.1.0
 
   # Network
