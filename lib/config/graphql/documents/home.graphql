@@ -1,0 +1,38 @@
+query CurrentOrder {
+  currentOrder {
+    ...CurrentOrder
+  }
+  getCurrentOrderDriverLocation {
+    ...PointFragment
+  }
+}
+
+query DriversAround($center: PointInput!) {
+  getDriversLocation(center: $center) {
+    ...PointFragment
+  }
+}
+
+query DestinationSuggesions {
+  riderAddresses {
+    ...FavoriteLocationFragment
+  }
+  orders(sorting: { field: id, direction: DESC }, paging: { first: 3 }) {
+    edges {
+      node {
+        addresses
+        points {
+          ...PointFragment
+          lat
+          lng
+        }
+      }
+    }
+  }
+}
+
+mutation UpdateFcmToken($token: String!) {
+  updateOneRider(input: { id: "1", update: { notificationPlayerId: $token } }) {
+    ...ProfileFragment
+  }
+}

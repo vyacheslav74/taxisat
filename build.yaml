@@ -1,0 +1,47 @@
+targets:
+  $default:
+    sources:
+      - pubspec.yaml
+      - $package$
+      - lib/**
+      - assets/**
+      - graphql/**
+    builders:
+      graphql_codegen:
+        options:
+          addTypename: true
+          addTypenameExcludedPaths:
+            - subscription
+          scopes:
+            - lib/config/graphql/**
+          clients:
+            - graphql
+
+          scalars:
+            DateTime:
+              type: DateTime
+              fromJsonFunctionName: fromGraphQLDateTimeToDartDateTime
+              toJsonFunctionName: fromDartDateTimeToGraphQLDateTime
+              import: package:flutter_common/core/graphql/scalars/datetime.dart
+            Timestamp:
+              type: DateTime
+              fromJsonFunctionName: fromGraphQLTimestampToDartDateTime
+              toJsonFunctionName: fromDartDateTimeToGraphQLTimestamp
+              import: package:flutter_common/core/graphql/scalars/timestamp.dart
+            ConnectionCursor:
+              type: String
+              fromJsonFunctionName: fromGraphQLConnectionCursorToDartString
+              toJsonFunctionName: fromDartStringToGraphQLConnectionCursor
+              import: package:flutter_common/core/graphql/scalars/connection_cursor.dart
+
+      auto_route_generator:auto_route_generator: # this for @RoutePage
+        options:
+          enable_cached_builds: true
+        generate_for:
+          - lib/features/**/**_screen.dart
+          - lib/features/**/**_dialog.dart
+      auto_route_generator:auto_router_generator: # this for @AutoRouterConfig
+        options:
+          enable_cached_builds: true
+        generate_for:
+          - lib/config/router/app_router.dart

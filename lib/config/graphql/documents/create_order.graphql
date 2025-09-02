@@ -1,0 +1,11 @@
+mutation CreateOrder($input: CreateOrderInput!) {
+  createOrder(input: $input) {
+    ...CurrentOrder
+  }
+}
+
+query WalletForCurrency($currency: String!) {
+  riderWallets(filter: { currency: { eq: $currency } }) {
+    balance
+  }
+}

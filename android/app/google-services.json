@@ -1,0 +1,127 @@
+{
+  "project_info": {
+    "project_number": "912880218902",
+    "firebase_url": "https://newagent-2302f.firebaseio.com",
+    "project_id": "newagent-2302f",
+    "storage_bucket": "newagent-2302f.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912880218902:android:1bdccc1876bdcfec339637",
+        "android_client_info": {
+          "package_name": "com.ridy.taxi.rider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912880218902-37d7g3l2h25nfce4m8ignqbnueh9dfvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0N5OoDrfxjk4ynqw3rNswKTKaZEze6Mg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912880218902-37d7g3l2h25nfce4m8ignqbnueh9dfvu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "912880218902-9sjen2eruik9n108sdjuhtiugcc7g1a0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ridy.taxi.rider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912880218902:android:52287b472625a611339637",
+        "android_client_info": {
+          "package_name": "com.satka.taxi.driver"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912880218902-et2aoc28gubc7agvk4mpghstj1rt8qbc.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.satka.taxi.driver",
+            "certificate_hash": "0d4dd9d1a39031f9f982bf7c8af817b0966ea352"
+          }
+        },
+        {
+          "client_id": "912880218902-37d7g3l2h25nfce4m8ignqbnueh9dfvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0N5OoDrfxjk4ynqw3rNswKTKaZEze6Mg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912880218902-37d7g3l2h25nfce4m8ignqbnueh9dfvu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "912880218902-9sjen2eruik9n108sdjuhtiugcc7g1a0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ridy.taxi.rider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:912880218902:android:5cecbee9b0475b08339637",
+        "android_client_info": {
+          "package_name": "com.satka.taxi.rider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "912880218902-37d7g3l2h25nfce4m8ignqbnueh9dfvu.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD0N5OoDrfxjk4ynqw3rNswKTKaZEze6Mg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "912880218902-37d7g3l2h25nfce4m8ignqbnueh9dfvu.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "912880218902-9sjen2eruik9n108sdjuhtiugcc7g1a0.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.ridy.taxi.rider"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

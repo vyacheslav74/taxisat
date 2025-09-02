@@ -1,0 +1,124 @@
+query RideHistory {
+  orders(sorting: [{ field: id, direction: DESC }], paging: { first: 20 }) {
+    edges {
+      node {
+        ...CurrentOrder
+        id
+        createdOn
+        expectedTimestamp
+        startTimestamp
+        finishTimestamp
+        riderLastSeenMessagesAt
+        distanceBest
+        durationBest
+        status
+        destinationArrivedTo
+        etaPickup
+        paidAmount
+        costAfterCoupon
+        costBest
+        currency
+        addresses
+        waitMinutes
+        paymentMode
+        durationBest
+        riderLastSeenMessagesAt
+        paymentGateway {
+          ...PaymentGatewayFragment
+          id
+          title
+          type
+          linkMethod
+          media {
+            ...MediaFragment
+            id
+            address
+          }
+        }
+        savedPaymentMethod {
+          ...SavedPaymentMethodFragment
+          id
+          providerBrand
+          lastFour
+          isEnabled
+          isDefault
+          title
+          expiryDate
+          holderName
+        }
+        points {
+          ...PointFragment
+          lat
+          lng
+        }
+        directions {
+          ...PointFragment
+          lat
+          lng
+        }
+        driverDirections {
+          ...PointFragment
+          lat
+          lng
+        }
+        driver {
+          id
+          firstName
+          lastName
+          media {
+            address
+          }
+          mobileNumber
+          carPlate
+          car {
+            name
+          }
+          carColor {
+            name
+          }
+          rating
+          reviewCount
+        }
+        service {
+          media {
+            address
+          }
+          name
+          description
+          prepayPercent
+          cancellationTotalFee
+        }
+        options {
+          ...RideOption
+          id
+          name
+          description
+          type
+          additionalFee
+          icon
+        }
+        directions {
+          ...PointFragment
+          lat
+          lng
+        }
+
+        conversations {
+          ...ChatMessage
+          id
+          sentAt
+          requestId
+          content
+          status
+          sentByDriver
+        }
+      }
+    }
+  }
+}
+
+mutation SubmitIssue($input: CreateOneComplaintInput!) {
+  createOneComplaint(input: $input) {
+    id
+  }
+}

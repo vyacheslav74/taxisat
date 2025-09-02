@@ -1,0 +1,14 @@
+query Announcements {
+  announcements {
+    edges {
+      node {
+        id
+        title
+        description
+        startAt
+        expireAt
+        url
+      }
+    }
+  }
+}

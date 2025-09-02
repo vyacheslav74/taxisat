@@ -1,0 +1,13 @@
+fragment ProfileFragment on Rider {
+  id
+  firstName
+  lastName
+  email
+  gender
+  mobileNumber
+  countryIso
+  presetAvatarNumber
+  media {
+    ...MediaFragment
+  }
+}

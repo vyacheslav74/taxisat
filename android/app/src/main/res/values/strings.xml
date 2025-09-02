@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+  <string name="notification_arrived_title">Машина подъехала!</string>
+  <string name="notification_arrived_body">Ваша машина прибыла в нужное место</string>
+  <string name="notification_started_title">Стартовали</string>
+  <string name="notification_started_body">Путешествие началось</string>
+  <string name="notification_waiting_for_pay_title">Ожидание оплаты</string>
+  <string name="notification_waiting_for_pay_body">Поездка завершена. Пожалуйста, продолжайте оплату</string>
+  <string name="notification_finished_title">Поездка закончена</string>
+  <string name="notification_finished_body">Поездка завершена</string>
+  <string name="notification_new_message_title">Новое сообщение</string>
+  <string name="notification_cancel_title">Отменена</string>
+  <string name="notification_cancel_body">Ваша поездка была отменена. Вы можете повторно оформить новый заказ</string>
+  <string name="notification_found_title">Водитель найден</string>
+  <string name="notification_found_body">Водитель уже на пути к вам</string>
+  <string name="notification_booking_assigned_title">Поезка запланирорвана!</string>
+  <string name="notification_booking_assigned_body"> Ваша поездка на %1$s подтверждена, и за вами закреплен водитель.</string>
+  <string name="facebook_app_id">[APP_ID]</string>
+</resources>

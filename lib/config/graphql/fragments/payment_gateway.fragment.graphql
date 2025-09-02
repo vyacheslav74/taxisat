@@ -1,0 +1,11 @@
+fragment PaymentGatewayFragment on PaymentGateway {
+  id
+  title
+  type
+  linkMethod
+  media {
+    ...MediaFragment
+    id
+    address
+  }
+}

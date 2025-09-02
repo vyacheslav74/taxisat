@@ -1,0 +1,15 @@
+query ScheduledRides {
+  orders(filter: { status: { eq: Booked } }) {
+    edges {
+      node {
+        ...CurrentOrder
+      }
+    }
+  }
+}
+
+mutation CancelBooking($orderId: ID!) {
+  cancelBooking(id: $orderId) {
+    id
+  }
+}

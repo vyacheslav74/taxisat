@@ -1,0 +1,73 @@
+query CalculateFare(
+  $points: [PointInput!]!
+  $couponCode: String
+  $selectedOptionIds: [String!]!
+  $twoWay: Boolean!
+  $waitTime: Int
+) {
+  getFares(
+    input: {
+      points: $points
+      couponCode: $couponCode
+      selectedOptionIds: $selectedOptionIds
+      twoWay: $twoWay
+      waitTime: $waitTime
+    }
+  ) {
+    services {
+      id
+      name
+      services {
+        id
+        name
+        description
+        personCapacity
+        paymentMethod
+        cost
+        costAfterCoupon
+        options {
+          ...RideOption
+          id
+          name
+          description
+          type
+          additionalFee
+          icon
+        }
+        media {
+          ...MediaFragment
+          id
+          address
+        }
+      }
+    }
+    directions {
+      ...PointFragment
+      lat
+      lng
+      heading
+    }
+    currency
+    distance
+    duration
+  }
+  savedPaymentMethods {
+    ...SavedPaymentMethodFragment
+  }
+  paymentGateways {
+    ...PaymentGatewayFragment
+  }
+  riderWallets {
+    balance
+    currency
+  }
+}
+
+query GetCouponInfo($couponCode: String!) {
+  couponInfo(code: $couponCode) {
+    id
+    code
+    description
+    expireAt
+  }
+}

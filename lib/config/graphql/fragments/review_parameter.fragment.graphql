@@ -1,0 +1,5 @@
+fragment ReviewParameter on FeedbackParameter {
+  id
+  isGood
+  title
+}

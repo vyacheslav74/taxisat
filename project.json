@@ -1,0 +1,142 @@
+{
+  "name": "rider-frontend",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/rider-frontend/src",
+  "projectType": "application",
+  "targets": {
+    "analyze": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter analyze",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "clean": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter clean",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "format": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter format apps/rider-frontend/*",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "test": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter test",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "doctor": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter doctor",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "assemble": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter assemble",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "attach": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter attach",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "drive": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter drive",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "gen-l10n": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter gen-l10n",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "install": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter install",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "run": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter run",
+        "cwd": "apps/rider-frontend"
+      }
+    },
+    "build-aar": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build aar",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    },
+    "build-apk": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build apk",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    },
+    "build-appbundle": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build appbundle",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    },
+    "build-bundle": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build bundle",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    },
+    "build-ios": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build ios",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    },
+    "build-ios-framework": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build ios-framework",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    },
+    "build-ipa": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "fvm flutter build ipa",
+        "cwd": "apps/rider-frontend"
+      },
+      "outputs": ["{workspaceRoot}/apps/rider-frontend/build"]
+    }
+  },
+  "tags": []
+}

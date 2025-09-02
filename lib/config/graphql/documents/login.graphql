@@ -1,0 +1,50 @@
+mutation VerifyNumber($number: String!, $countryIso: String!) {
+  verifyNumber(mobileNumber: $number, countryIso: $countryIso) {
+    ...VerifyNumberFragment
+  }
+}
+
+mutation VerifyOtp($hash: String!, $code: String!) {
+  verifyOtp(hash: $hash, code: $code) {
+    ...VerifyOtpOrPasswordFragment
+  }
+}
+
+mutation VerifyPassword($mobileNumber: String!, $password: String!) {
+  verifyPassword(mobileNumber: $mobileNumber, password: $password) {
+    ...VerifyOtpOrPasswordFragment
+  }
+}
+
+mutation SetName(
+  $firstName: String!
+  $lastName: String!
+  $email: String
+  $gender: Gender
+) {
+  updateOneRider(
+    input: {
+      id: "1"
+      update: {
+        firstName: $firstName
+        lastName: $lastName
+        email: $email
+        gender: $gender
+      }
+    }
+  ) {
+    ...ProfileFragment
+  }
+}
+
+mutation SetPassword($password: String!) {
+  setPassword(password: $password) {
+    ...VerifyOtpOrPasswordFragment
+  }
+}
+
+mutation ResendOtp($mobileNumber: String!, $force: Boolean!) {
+  verifyNumber(mobileNumber: $mobileNumber, forceSendOtp: $force) {
+    ...VerifyNumberFragment
+  }
+}

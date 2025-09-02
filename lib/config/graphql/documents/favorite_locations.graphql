@@ -1,0 +1,23 @@
+query FavoriteLocations {
+  riderAddresses {
+    ...FavoriteLocationFragment
+  }
+}
+
+mutation UpdateFavoriteLocation($input: UpdateOneRiderAddressInput!) {
+  updateOneRiderAddress(input: $input) {
+    ...FavoriteLocationFragment
+  }
+}
+
+mutation CreateFavoriteLocation($input: CreateOneRiderAddressInput!) {
+  createOneRiderAddress(input: $input) {
+    ...FavoriteLocationFragment
+  }
+}
+
+mutation DeleteFavoriteLocation($input: DeleteOneRiderAddressInput!) {
+  deleteOneRiderAddress(input: $input) {
+    id
+  }
+}

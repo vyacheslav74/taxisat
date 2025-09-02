@@ -1,0 +1,52 @@
+query Profile {
+  rider(id: "1") {
+    ...ProfileFragment
+  }
+}
+
+query ProfileAggregations {
+  rider(id: "1") {
+    ordersAggregate(filter: { status: { eq: Finished } }) {
+      count {
+        id
+      }
+      sum {
+        distanceBest
+      }
+    }
+    favoriteDriversAggregate {
+      count {
+        id
+      }
+    }
+  }
+}
+
+query FavoriteDrivers {
+  rider(id: "1") {
+    favoriteDrivers {
+      ...FavoriteDriver
+    }
+  }
+}
+
+mutation UpdateProfileImage($mediaId: ID, $presetImageId: Int) {
+  updateOneRider(
+    input: {
+      id: "1"
+      update: { mediaId: $mediaId, presetAvatarNumber: $presetImageId }
+    }
+  ) {
+    ...ProfileFragment
+  }
+}
+
+mutation DeleteFavoriteDriver($driverId: ID!) {
+  deleteFavoriteDriver(driverId: $driverId)
+}
+
+mutation DeleteAccount {
+  deleteUser {
+    id
+  }
+}

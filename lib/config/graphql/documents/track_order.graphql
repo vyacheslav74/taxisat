@@ -1,0 +1,56 @@
+mutation CancelOrder(
+  $orderId: ID!
+  $cancelReasonId: ID
+  $cancelReasonNote: String
+) {
+  cancelOrder(
+    orderId: $orderId
+    cancelReasonId: $cancelReasonId
+    cancelReasonNote: $cancelReasonNote
+  ) {
+    ...CurrentOrder
+  }
+}
+
+subscription OrderUpdateSubsctipion {
+  orderUpdated {
+    ...CurrentOrder
+  }
+}
+
+subscription DriverLocationUpdated {
+  driverLocationUpdated {
+    ...PointFragment
+  }
+}
+
+subscription NewMessageReceived {
+  newMessageReceived {
+    ...ChatMessage
+  }
+}
+
+query CancelReasons {
+  orderCancelReasons {
+    id
+    title
+  }
+}
+
+mutation SendMessage($message: String!, $orderId: ID!) {
+  createOneOrderMessage(
+    input: { orderMessage: { content: $message, requestId: $orderId } }
+  ) {
+    ...ChatMessage
+  }
+}
+
+mutation SendSOS($orderId: ID!) {
+  sosSignal(orderId: $orderId) {
+    id
+  }
+}
+
+mutation UpdateLastSeenMessages($orderId: ID!) {
+  updateLastSeenMessagesAt(orderId: $orderId)
+}

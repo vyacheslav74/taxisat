@@ -1,0 +1,74 @@
+query Wallet {
+  rider(id: "1") {
+    id
+    firstName
+    lastName
+    transactions {
+      nodes {
+        id
+        deductType
+        rechargeType
+        amount
+        currency
+        createdAt
+      }
+    }
+    wallets {
+      id
+      currency
+      balance
+    }
+  }
+  savedPaymentMethods {
+    ...SavedPaymentMethodFragment
+  }
+  paymentGateways {
+    ...PaymentGatewayFragment
+  }
+}
+
+query SavedPaymentMethods {
+  savedPaymentMethods {
+    ...SavedPaymentMethodFragment
+  }
+  paymentGateways {
+    ...PaymentGatewayFragment
+  }
+}
+
+# query SavableGateways {
+#   savableGateways {
+#     id
+#     title
+#     type
+#     media {
+#       ...MediaFragment
+#     }
+#   }
+# }
+
+mutation GetSetupPaymentMethodLink($gatewayId: ID!) {
+  setupPaymentMethod(gatewayId: $gatewayId) {
+    url
+  }
+}
+
+mutation RedeemGiftCard($code: String!) {
+  redeemGiftCard(code: $code) {
+    id
+    amount
+    currency
+  }
+}
+
+mutation MarkAsDefault($id: ID!, $isDefault: Boolean!) {
+  updatePaymentMethodDefault(id: $id, isDefault: $isDefault) {
+    ...SavedPaymentMethodFragment
+  }
+}
+
+mutation TopUpWallet($input: TopUpWalletInput!) {
+  topUpWallet(input: $input) {
+    ...IntentResult
+  }
+}

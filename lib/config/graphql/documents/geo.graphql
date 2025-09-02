@@ -1,0 +1,41 @@
+query ReverseGeocode(
+  $lat: Float!
+  $lng: Float!
+  $language: String!
+  $provider: GeoProvider!
+) {
+  reverseGeocode(
+    location: { lat: $lat, lng: $lng }
+    language: $language
+    provider: $provider
+  ) {
+    address
+    point {
+      lat
+      lng
+    }
+  }
+}
+
+query GetPlaces(
+  $query: String!
+  $location: PointInput
+  $radius: Int!
+  $language: String!
+  $provider: GeoProvider!
+) {
+  getPlaces(
+    keyword: $query
+    location: $location
+    radius: $radius
+    language: $language
+    provider: $provider
+  ) {
+    address
+    title
+    point {
+      lat
+      lng
+    }
+  }
+}

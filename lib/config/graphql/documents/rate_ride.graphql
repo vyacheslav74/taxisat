@@ -1,0 +1,31 @@
+query ReviewParameters {
+  feedbackParameters {
+    ...ReviewParameter
+  }
+}
+
+mutation SubmitReview(
+  $requestId: ID!
+  $score: Int!
+  $feedback: String
+  $parameterIds: [ID!]!
+  $addToFavorite: Boolean!
+) {
+  submitReview(
+    review: {
+      score: $score
+      description: $feedback
+      parameterIds: $parameterIds
+      requestId: $requestId
+      addToFavorite: $addToFavorite
+    }
+  ) {
+    id
+  }
+}
+
+mutation SkipReview {
+  skipReview {
+    id
+  }
+}

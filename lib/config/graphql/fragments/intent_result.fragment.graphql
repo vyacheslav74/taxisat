@@ -1,0 +1,5 @@
+fragment IntentResult on TopUpWalletResponse {
+  status
+  url
+  error
+}

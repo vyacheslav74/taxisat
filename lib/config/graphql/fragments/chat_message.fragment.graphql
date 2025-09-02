@@ -1,0 +1,8 @@
+fragment ChatMessage on OrderMessage {
+  id
+  sentAt
+  requestId
+  content
+  status
+  sentByDriver
+}

@@ -1,0 +1,336 @@
+import 'dart:async';
+import 'dart:math';
+
+import 'package:collection/collection.dart';
+import 'package:dartz/dartz.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter_common/core/entities/driver_location.dart';
+
+import 'package:flutter_common/core/entities/place.dart';
+import 'package:flutter_common/core/enums/order_status.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:hydrated_bloc/hydrated_bloc.dart';
+import 'package:injectable/injectable.dart';
+import 'package:rxdart/rxdart.dart';
+
+
+import '../../../../config/locator/locator.dart';
+import '../../../../core/datasources/geo_datasource.dart';
+import '../../../../core/entities/order.dart';
+import '../../../../core/error/failure.dart';
+import '../../domain/repositories/home_repository.dart';
+import '../../features/track_order/presentation/blocs/track_order.dart';
+
+part 'home.state.dart';
+part 'home.freezed.dart';
+part 'home.g.dart';
+
+@lazySingleton
+class HomeCubit extends Cubit<HomeState> {
+  final HomeRepository homeRepository;
+  final GeoDatasource geoDatasource;
+
+  StreamSubscription<Either<Failure, List<DriverLocation>>>? _driverLocationSubscription;
+  Timer? _driverAnimationTimer;
+
+
+  HomeCubit(this.homeRepository, this.geoDatasource)
+      : super(
+      const HomeState.welcome(
+    waypoints: [null, null], driversAround: []
+
+  ));
+
+  @override
+  Future<void> close() {
+    _driverLocationSubscription?.cancel();
+    _driverAnimationTimer?.cancel();
+    _driverLocationSubscription?.cancel();
+    _animationTimer?.cancel();
+    return super.close();
+  }
+
+
+  void onStarted({
+    required bool authenticated,
+    required PlaceEntity? currentLocationPlace,
+  }) async {
+    if (authenticated) {
+      final currentOrder = await homeRepository.getCurrentOrder();
+      await currentOrder.fold(
+            (l) async => emit(HomeState.error(error: l.errorMessage)),
+            (r) async {
+          if (r == null) {
+            // no active order returned from server
+            switch (state) {
+              case RideInProgressState():
+              case RateDriverState():
+                initializeWelcome(pickupPoint: currentLocationPlace);
+                break;
+              default:
+            }
+          } else {
+            // active order returned from server
+            if (r.$1.status != OrderStatus.waitingForReview) {
+              emit(
+                HomeState.rideInProgress(
+                  order: r.$1,
+                  driverLocation: r.$2,
+                ),
+              );
+            } else {
+              locator.resetLazySingleton<TrackOrderBloc>();
+              emit(
+                HomeState.rateDriver(
+                  order: r.$1,
+                ),
+              );
+            }
+          }
+        },
+      );
+    } else {
+
+        return initializeWelcome(pickupPoint: currentLocationPlace);}
+
+  }
+
+  void initializeWelcome({
+    required PlaceEntity? pickupPoint,
+  }) async {
+    emit(
+      HomeState.welcome(
+        waypoints: [pickupPoint, null],
+        driversAround: [],
+      ),
+    );
+    _showDriversAround(waypoints: [pickupPoint, null]);
+  }
+
+  void closeWaypointsInput({
+    required List<PlaceEntity?> waypoints,
+  }) async {
+    emit(HomeState.welcome(waypoints: waypoints, driversAround: []));
+    _showDriversAround(
+      waypoints: waypoints,
+    );
+  }
+
+  void onMapMoved({
+    required PlaceEntity selectedLocation,
+  }) async {
+    state.mapOrNull(
+      welcome: (welcome) async {
+        _showDriversAround(
+          waypoints: welcome.waypoints.mapIndexed((index, e) => index == 0 ? selectedLocation : e).toList(),
+        );
+      },
+      confirmLocation: (confirmLocation) async {
+        emit(
+          HomeState.confirmLocation(
+            waypoints: confirmLocation.waypoints,
+            index: confirmLocation.index,
+            selectedLocation: selectedLocation,
+          ),
+        );
+      },
+    );
+  }
+
+  Timer? _animationTimer;
+
+  List<DriverLocation> _currentDisplayDrivers = [];
+  DateTime? _animationStartTime;
+  static const _animationDuration = Duration(seconds: 1);
+  final Map<int, DriverLocation> _previousDriverPositions = {};
+  final Map<int, DateTime> _lastDriverUpdates = {};
+
+
+  void _showDriversAround({
+    required List<PlaceEntity?> waypoints,
+  }) async {
+    if (waypoints.first == null) {
+      emit(const HomeState.welcome(
+        waypoints: [null, null],
+        driversAround: [],
+      ));
+      return;
+    }
+
+    await _driverLocationSubscription?.cancel();
+    _driverAnimationTimer?.cancel();
+
+    // Периодические обновления с анимацией
+    _driverLocationSubscription = Stream.periodic(
+      const Duration(seconds: 1),
+          (_) => homeRepository.getDriversAround(waypoints.first!.latLng2),
+    ).asyncMap((future) => future)
+        .throttleTime(const Duration(seconds: 3)) // Добавляем throttle вместо debounce
+        .distinct() // Игнорируем повторяющиеся данные
+        .listen((result) async {
+      result.fold(
+            (failure) => emit(HomeState.error(error: failure.errorMessage)),
+            (newDrivers) {
+          if (state is! WelcomeState && state is! _Loading) return;
+
+          // Выносим обработку в отдельный микротаск
+          Future.microtask(() {
+            _startDriverAnimation(newDrivers, waypoints);
+          });
+        },
+      );
+    });
+  }
+
+  void _startDriverAnimation(List<DriverLocation> newDrivers, List<PlaceEntity?> waypoints) {
+    _animationStartTime = DateTime.now();
+    _driverAnimationTimer?.cancel();
+    _driverAnimationTimer = Timer.periodic(
+      const Duration(milliseconds: 16),
+          (timer) {
+        final now = DateTime.now();
+        final elapsed = now.difference(_animationStartTime!);
+        final progress = min(1.0, elapsed.inMilliseconds / _animationDuration.inMilliseconds);
+
+        _currentDisplayDrivers = newDrivers.asMap().map((index, newDriver) {
+          final previousDriver = _previousDriverPositions[index];
+          _lastDriverUpdates[index] = now;
+
+          if (previousDriver == null) {
+            _previousDriverPositions[index] = newDriver;
+            return MapEntry(index, newDriver);
+          }
+
+          return MapEntry(index, DriverLocation(
+            lat: _interpolate(previousDriver.lat, newDriver.lat, progress),
+            lng: _interpolate(previousDriver.lng, newDriver.lng, progress),
+            rotation: _interpolateAngle(previousDriver.rotation, newDriver.rotation, progress),
+          ));
+        }).values.toList();
+
+        emit(HomeState.welcome(
+          waypoints: waypoints,
+          driversAround: _currentDisplayDrivers,
+        ));
+
+        if (progress >= 1.0) {
+          timer.cancel();
+          newDrivers.asMap().forEach((index, driver) {
+            _previousDriverPositions[index] = driver;
+          });
+        }
+      },
+    );
+  }
+
+  double _interpolate(double start, double end, double progress) {
+    return start + (end - start) * progress;
+  }
+
+  int _interpolateAngle(int? start, int? end, double progress) {
+    if (start == null && end == null) return 0;
+    if (start == null) return end!;
+    if (end == null) return start;
+
+    final diff = ((end - start + 180) % 360) - 180;
+    return (start + diff * progress).round() % 360;
+  }
+
+
+  void onAddStop() {
+    state.maybeMap(
+      orElse: () => throw Exception('Invalid state'),
+      inputWaypoints: (inputWaypoints) {
+        emit(
+          inputWaypoints.copyWith(
+            waypoints: inputWaypoints.waypoints.followedBy([null]).toList(),
+          ),
+        );
+      },
+    );
+  }
+
+  void onRemoveStop(int index) {
+    state.maybeMap(
+      orElse: () => throw Exception('Invalid state'),
+      inputWaypoints: (inputWaypoints) {
+        final locations = [...inputWaypoints.waypoints];
+        locations.removeAt(index);
+        emit(inputWaypoints.copyWith(waypoints: locations));
+      },
+    );
+  }
+
+  void onLocationSelected(int index, PlaceEntity place) {
+    state.maybeMap(
+      orElse: () => throw Exception('Invalid state'),
+      inputWaypoints: (inputWaypoints) {
+        final locations = [...inputWaypoints.waypoints];
+        locations[index] = place;
+        emit(inputWaypoints.copyWith(waypoints: locations));
+      },
+    );
+  }
+
+  void showWaypoints({
+    required List<PlaceEntity?> waypoints,
+  }) =>
+      emit(
+        HomeState.inputWaypoints(
+          waypoints: waypoints,
+        ),
+      );
+
+  void showConfirmLocation({
+    required List<PlaceEntity?> waypoints,
+    required int index,
+    required PlaceEntity selectedLocation,
+  }) =>
+      emit(
+        HomeState.confirmLocation(
+          waypoints: waypoints,
+          index: index,
+          selectedLocation: selectedLocation,
+        ),
+      );
+
+  void showPreview({
+    required List<PlaceEntity> waypoints,
+    required List<LatLngEntity> directions,
+  }) =>
+      emit(
+        HomeState.ridePreview(
+          waypoints: waypoints,
+          directions: directions,
+        ),
+      );
+
+  void showInProgress({
+    required OrderEntity order,
+    required DriverLocation? driverLocation,
+  }) =>
+      emit(
+        HomeState.rideInProgress(
+          order: order,
+          driverLocation: driverLocation,
+        ),
+      );
+
+  void showRate({
+    required OrderEntity order,
+  }) =>
+      emit(
+        HomeState.rateDriver(
+          order: order,
+        ),
+      );
+
+// @override
+// HomeState? fromJson(Map<String, dynamic> json) => HomeState.fromJson(json);
+
+// @override
+// Map<String, dynamic>? toJson(HomeState state) => state.toJson();
+
+
+
+}

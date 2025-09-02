@@ -1,0 +1,4 @@
+fragment MediaFragment on Media {
+  id
+  address
+}
