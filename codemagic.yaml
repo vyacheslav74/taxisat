@@ -3,7 +3,7 @@ workflows:
     name: Flutter iOS Build
     environment:
       groups:
-        - app_credentials # Группа для сертификатов и профилей
+        
         - firebase_vars # Добавьте эту группу для Firebase переменных
       vars:
         BUNDLE_ID: "com.satka.taxi.rider" # Ваш bundle id
