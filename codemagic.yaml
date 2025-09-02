@@ -25,14 +25,11 @@ workflows:
         script: |
           flutter --version
           flutter pub get
-
-     
-
+          
       - name: Build iOS
         script: |
           flutter build ipa --release --no-codesign
-
-
+          
        - name: Set Firebase app ID
         script: |
       # Установить переменную окружения
