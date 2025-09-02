@@ -1,17 +1,51 @@
+# codemagic.yaml
 workflows:
+  flutter-ios-workflow:
+    name: Flutter iOS Build
+    environment:
+      groups:
+        - app_credentials # Группа для сертификатов и профилей
+      vars:
+        BUNDLE_ID: "com.satka.taxi.rider" # Ваш bundle id
+        XCODE_WORKSPACE: "ios/Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        FLUTTER_VERSION: "3.22.0" # Укажите вашу версию Flutter
 
-    android-workflow-id:
+    triggering:
+      events:
+        - push
+        - pull_request
+      branch_patterns:
+        - pattern: 'main'
+          include: true
+          source: true
 
-        name: Android Sample Workflow
+    scripts:
+      - name: Set up Flutter
+        script: |
+          flutter --version
+          flutter pub get
 
-        # .......    
+      - name: Build iOS
+        script: |
+          flutter build ipa --release --no-codesign
 
-        # .......
+      - name: Code signing
+        script: |
+          # Создание директории для экспорта
+          mkdir -p build/ios/ipa
 
-        # .......  
+          # Копирование .ipa файла
+          cp build/ios/ipa/*.ipa build/ios/ipa/app.ipa
 
-    ios-workflow-id:
+    artifacts:
+      - build/ios/ipa/*.ipa
+      - build/ios/archive/*.xcarchive
 
-        name: iOS Sample Workflow
-
-        # ......
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
+        notify:
+          success: true
+          failure: true
