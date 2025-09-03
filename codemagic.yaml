@@ -4,7 +4,7 @@ workflows:
     environment:
       groups:
         
-        - firebase_vars # Добавьте эту группу для Firebase переменных
+        
       vars:
         BUNDLE_ID: "com.satka.taxi.rider" # Ваш bundle id
         XCODE_WORKSPACE: "ios/Runner.xcworkspace"
