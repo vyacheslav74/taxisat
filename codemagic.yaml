@@ -26,6 +26,11 @@ workflows:
           flutter --version
           flutter pub get
 
+      - name: Set up Firebase configuration
+        script: |
+          echo $FIREBASE_IOS_CONFIG > $CM_BUILD_DIR/ios/Runner/GoogleService-Info.plist
+          echo "Firebase config file created"
+
       - name: Set Firebase app ID
         script: |
           mkdir -p ios
