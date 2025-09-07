@@ -3,30 +3,31 @@ workflows:
     name: iOS Simulator Build
     environment:
       xcode: latest
-      vars:
-        XCODE_SCHEME: "Runner"
+      cocoapods: default
     
     scripts:
-      - name: Verify iOS project
-        script: |
-          if [ ! -d "ios" ]; then
-            echo "❌ iOS directory not found"
-            exit 1
-          fi
-          
-          if [ ! -d "ios/Runner.xcworkspace" ]; then
-            echo "⚠️  Workspace not found, generating..."
-            cd ios
-            pod install
-            cd ..
-          fi
-      
-      - name: Build Runner
+      - name: Clean and reinstall pods
         script: |
           cd ios
+          # Полная очистка
+          rm -rf Pods Podfile.lock Runner.xcworkspace
+          pod cache clean --all
+          pod deintegrate
+          
+          # Переустановка
+          pod install --repo-update --verbose
+          cd ..
+      
+      - name: Build with fixed pod paths
+        script: |
+          cd ios
+          # Сборка с явным указанием путей
           xcodebuild build \
             -workspace Runner.xcworkspace \
             -scheme Runner \
+            -sdk iphonesimulator \
             -destination "generic/platform=iOS Simulator" \
             CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=YES 
+            ONLY_ACTIVE_ARCH=YES \
+            DERIVED_DATA_PATH="./build" \
+            -quiet
