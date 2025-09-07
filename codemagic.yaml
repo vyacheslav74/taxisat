@@ -6,27 +6,18 @@ workflows:
       flutter: stable
     
     scripts:
-      - name: Build with analysis options
+      - name: Get full error details
         script: |
           flutter clean
           flutter pub get
-          
-          # Создаем анализ options для отключения null safety
-          echo "Creating analysis_options.yaml..."
-          cat > analysis_options.yaml << EOL
-analyzer:
-  language:
-    strict-casts: false
-    strict-inference: false
-    strict-raw-types: false
-EOL
-          
           flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
           
+          # Сохраняем логи
           mkdir -p error_logs
           cp error_log.txt error_logs/
+          
+          # Всегда выходим с ошибкой чтобы увидеть логи
           exit 1
     
     artifacts:
       - error_logs/error_log.txt
-      - analysis_options.yaml
