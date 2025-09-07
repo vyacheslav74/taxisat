@@ -3,32 +3,39 @@ workflows:
     name: iOS Simulator Build
     environment:
       xcode: latest
+      cocoapods: default
     
     scripts:
-      - name: Force workspace creation
+      - name: Complete pod reinstallation
         script: |
+          echo "=== Current directory ==="
+          ls -la
+          
           cd ios
+          echo "=== iOS directory before ==="
+          ls -la
           
-          # Удаляем старые файлы
-          rm -rf Pods Podfile.lock Runner.xcworkspace
+          # Полная очистка
+          rm -rf Pods Podfile.lock Target\ Support\ Files Runner.xcworkspace
+          pod cache clean --all
           
-          # Принудительно создаем workspace
-          pod install --clean-install --repo-update
+          # Принудительная установка
+          pod install --clean-install --repo-update --verbose
           
-          # Проверяем создание
-          if [ ! -d "Runner.xcworkspace" ]; then
-            echo "❌ Workspace still not created"
-            echo "Creating manually..."
-            mkdir -p Runner.xcworkspace
-          fi
+          echo "=== iOS directory after pod install ==="
+          ls -la
+          echo "=== Target Support Files ==="
+          ls -la Target\ Support\ Files/ 2>/dev/null || echo "Not created yet"
           
           cd ..
       
-      - name: Build with project file
+      - name: Build application
         script: |
           cd ios
           xcodebuild build \
             -project Runner.xcodeproj \
             -scheme Runner \
             -sdk iphonesimulator \
-            CODE_SIGNING_ALLOWED=NO
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=YES
