@@ -2,12 +2,12 @@ workflows:
   ios-simulator:
     name: iOS Simulator Build
     environment:
-      ios_signing: none  # Без подписывания для симулятора
+      # УБРАТЬ ios_signing полностью для симулятора
       vars:
         XCODE_WORKSPACE: "Rider.xcworkspace"
         XCODE_SCHEME: "Rider"
-        SIMULATOR_DEVICE: "iPhone 15 Pro"  # Выбор симулятора
-        SIMULATOR_OS: "iOS 17.2"          # Версия iOS
+        SIMULATOR_DEVICE: "iPhone 15 Pro"
+        SIMULATOR_OS: "iOS 17.2"
     
     scripts:
       - name: Install dependencies
