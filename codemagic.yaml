@@ -1,17 +1,32 @@
 workflows:
-  ios-simulator:
-    name: iOS Simulator Build
+  ios-runner:
+    name: iOS Runner Build
     environment:
       xcode: latest
       vars:
-        XCODE_WORKSPACE: "Runner.xcworkspace"
         XCODE_SCHEME: "Runner"
     
     scripts:
-      - name: Build app
+      - name: Verify iOS project
         script: |
+          if [ ! -d "ios" ]; then
+            echo "❌ iOS directory not found"
+            exit 1
+          fi
+          
+          if [ ! -d "ios/Runner.xcworkspace" ]; then
+            echo "⚠️  Workspace not found, generating..."
+            cd ios
+            pod install
+            cd ..
+          fi
+      
+      - name: Build Runner
+        script: |
+          cd ios
           xcodebuild build \
-            -workspace "ios/$XCODE_WORKSPACE" \
-            -scheme "$XCODE_SCHEME" \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
             -destination "generic/platform=iOS Simulator" \
-            CODE_SIGNING_ALLOWED=NO
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=YES
