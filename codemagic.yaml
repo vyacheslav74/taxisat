@@ -1,6 +1,6 @@
 workflows:
-  ios-runner:
-    name: iOS Runner Build
+  ios-simulator:
+    name: iOS Simulator Build
     environment:
       xcode: latest
       vars:
