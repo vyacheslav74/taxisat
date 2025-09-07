@@ -43,5 +43,5 @@ workflows:
             exit 1
           fi                                                                                                                                                                                                                             
 	
- artifacts:
+     artifacts:
       - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
