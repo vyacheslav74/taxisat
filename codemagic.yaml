@@ -42,6 +42,5 @@ workflows:
             echo "❌ Build failed"
             exit 1
           fi
-		  
 	artifacts:
       - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
