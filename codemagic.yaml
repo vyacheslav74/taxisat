@@ -6,70 +6,31 @@ workflows:
       flutter: stable
     
     scripts:
-      - name: Flutter doctor and diagnostics
+      - name: Recreate iOS project
         script: |
-          echo "=== Flutter Doctor ==="
-          flutter doctor -v
-          echo ""
-          echo "=== Flutter Version ==="
-          flutter --version
-          echo ""
-          echo "=== Xcode Version ==="
-          xcodebuild -version
-          echo ""
-          echo "=== Project Structure ==="
-          ls -la
-          echo ""
-          echo "=== iOS Directory ==="
-          ls -la ios/ 2>/dev/null || echo "No ios directory"
-      
-      - name: Clean and setup
-        script: |
+          # Сохраняем важные файлы
+          if [ -f "ios/Runner/Info.plist" ]; then
+            cp ios/Runner/Info.plist Info.plist.backup
+          fi
+          if [ -f "ios/Runner/Assets.xcassets" ]; then
+            cp -R ios/Runner/Assets.xcassets Assets.backup
+          fi
+          
+          # Полная перегенерация
           flutter clean
+          rm -rf ios
+          flutter create --platforms=ios --project-name Runner .
+          
+          # Восстанавливаем файлы
+          if [ -f "Info.plist.backup" ]; then
+            cp Info.plist.backup ios/Runner/Info.plist
+          fi
+          if [ -d "Assets.backup" ]; then
+            cp -R Assets.backup/* ios/Runner/Assets.xcassets/
+          fi
+          
           flutter pub get
-          flutter pub upgrade
-          
-          # Очистка iOS кэша
-          cd ios
-          rm -rf Pods Podfile.lock
-          pod cache clean --all
-          cd ..
       
-      - name: Build with verbose logging
+      - name: Build fresh project
         script: |
-          # Сборка с максимально подробным выводом
-          flutter build ios \
-            --simulator \
-            --no-codesign \
-            --debug \
-            --verbose \
-            2>&1 | tee build_log.txt
-          
-          # Сохраняем логи для анализа
-          mkdir -p logs
-          cp build_log.txt logs/
-          
-          # Проверяем наличие приложения
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Build successful despite warnings"
-          else
-            echo "❌ Build failed completely"
-            echo "Showing errors from log:"
-            grep -i error build_log.txt | head -20
-            exit 1
-          fi
-      
-      - name: Collect artifacts
-        script: |
-          mkdir -p artifacts
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            cp -R build/ios/iphonesimulator/Runner.app artifacts/
-            echo "✅ App packaged successfully"
-          else
-            echo "⚠️  No app found, checking alternatives..."
-            find . -name "*.app" -type d
-          fi
-    
-    artifacts:
-      - artifacts/Runner.app
-      - logs/build_log.txt
+          flutter build ios --simulator --no-codesign --debug
