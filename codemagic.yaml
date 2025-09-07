@@ -41,6 +41,7 @@ workflows:
           else
             echo "❌ Build failed"
             exit 1
-          fi                                                                                                                                                                                                                             
-     artifacts:
-      - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
+          fi
+    
+    artifacts:
+       - build/ios/iphonesimulator/Runner.app
