@@ -1,29 +1,51 @@
 workflows:
-
-  simulator-workflow:
-
-    name: Build for simulator
-
+  ios-debug:
+    name: iOS Debug Build
     environment:
-
       xcode: latest
-
+      flutter: stable
+      node: 18.0.0
+    
     scripts:
-
-      - name: Build with Generic Destination
-
+      - name: Install flutterfire CLI
         script: |
-
-          xcodebuild build \
-
-            -project "Runner.xcodeproj" \
-
-            -scheme "Runner" \
-
-            -sdk iphonesimulator \
-
-            -configuration Debug          
-
+          echo "Installing flutterfire CLI..."
+          dart pub global activate flutterfire_cli
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          flutterfire --version
+          
+      - name: Setup project
+        script: |
+          flutter clean
+          flutter pub get
+          
+      - name: Build with Firebase scripts
+        script: |
+          # ВКЛЮЧАЕМ скрипты Firebase (раскомментируем)
+          cd ios
+          if [ -f "Podfile" ]; then
+            # Раскомментируем скрипты Firebase
+            sed -i '' 's/^# *flutterfire/flutterfire/g' Podfile 2>/dev/null || true
+          fi
+          
+          # Устанавливаем pods
+          pod install --repo-update --verbose
+          cd ..
+          
+          # Сборка с Firebase
+          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
+          
+          mkdir -p error_logs
+          cp error_log.txt error_logs/
+          
+          # Проверяем успешность сборки
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Build successful with Firebase!"
+            exit 0
+          else
+            echo "❌ Build failed"
+            exit 1
+          fi
+    
     artifacts:
-
-      - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
+      - build/ios/iphonesimulator/Runner.app
