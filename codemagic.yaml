@@ -1,7 +1,8 @@
 workflows:
   ios-simulator:
     name: iOS Simulator Build
-  
+    environment:
+      xcode: latest
     
     scripts:
       - name: Install dependencies
