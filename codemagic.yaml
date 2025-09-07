@@ -5,7 +5,7 @@ workflows:
       # УБРАТЬ ios_signing полностью для симулятора
       vars:
         XCODE_WORKSPACE: "Runner.xcworkspace"
-        XCODE_SCHEME: "Rider"
+        XCODE_SCHEME: "Runner"
         SIMULATOR_DEVICE: "iPhone 15 Pro"
         SIMULATOR_OS: "iOS 17.2"
     
