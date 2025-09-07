@@ -6,28 +6,40 @@ workflows:
       cocoapods: default
     
     scripts:
-      - name: Clean and reinstall pods
+      - name: Check and generate workspace
         script: |
-          cd ios
-          # Полная очистка
-          rm -rf Pods Podfile.lock Runner.xcworkspace
-          pod cache clean --all
-          pod deintegrate
+          echo "=== Checking iOS directory ==="
+          ls -la ios/
           
-          # Переустановка
-          pod install --repo-update --verbose
+          echo "=== Generating workspace ==="
+          cd ios
+          
+          # Если workspace нет - создаем через pod install
+          if [ ! -d "Runner.xcworkspace" ]; then
+            echo "Workspace not found, generating..."
+            pod install --repo-update --verbose
+          fi
+          
+          # Проверяем что workspace создался
+          if [ ! -d "Runner.xcworkspace" ]; then
+            echo "❌ Still no workspace after pod install"
+            echo "Trying alternative approach..."
+            
+            # Пробуем через xcodebuild
+            xcodebuild -list
+          fi
+          
           cd ..
       
-      - name: Build with fixed pod paths
+      - name: Build using project instead
         script: |
           cd ios
-          # Сборка с явным указанием путей
+          
+          # Используем .xcodeproj вместо .xcworkspace
           xcodebuild build \
-            -workspace Runner.xcworkspace \
+            -project Runner.xcodeproj \
             -scheme Runner \
             -sdk iphonesimulator \
             -destination "generic/platform=iOS Simulator" \
             CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=YES \
-            DERIVED_DATA_PATH="./build" \
-            -quiet
+            ONLY_ACTIVE_ARCH=YES
