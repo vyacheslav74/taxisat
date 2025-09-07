@@ -6,31 +6,99 @@ workflows:
       flutter: stable
     
     scripts:
-      - name: Recreate iOS project
+      - name: Enable Flutter verbose logging
         script: |
-          # Сохраняем важные файлы
-          if [ -f "ios/Runner/Info.plist" ]; then
-            cp ios/Runner/Info.plist Info.plist.backup
-          fi
-          if [ -f "ios/Runner/Assets.xcassets" ]; then
-            cp -R ios/Runner/Assets.xcassets Assets.backup
-          fi
+          export FLUTTER_VERBOSE_LOGGING=true
+          export VERBOSE_SCRIPT_LOGGING=true
           
-          # Полная перегенерация
+      - name: Flutter environment setup
+        script: |
+          echo "=== Detailed Environment ==="
+          flutter doctor -v
+          echo ""
+          echo "=== Xcode Details ==="
+          xcode-select -p
+          xcodebuild -version
+          echo ""
+          echo "=== CocoaPods ==="
+          pod --version
+          
+      - name: Clean and prepare
+        script: |
           flutter clean
-          rm -rf ios
-          flutter create --platforms=ios --project-name Runner .
-          
-          # Восстанавливаем файлы
-          if [ -f "Info.plist.backup" ]; then
-            cp Info.plist.backup ios/Runner/Info.plist
-          fi
-          if [ -d "Assets.backup" ]; then
-            cp -R Assets.backup/* ios/Runner/Assets.xcassets/
-          fi
-          
           flutter pub get
-      
-      - name: Build fresh project
+          flutter pub upgrade
+          
+          # Очистка iOS кэша
+          cd ios
+          rm -rf Pods Podfile.lock build DerivedData
+          pod cache clean --all
+          pod repo update
+          cd ..
+          
+      - name: Build with maximum verbosity
         script: |
-          flutter build ios --simulator --no-codesign --debug
+          # Сохраняем полные логи сборки
+          flutter build ios \
+            --simulator \
+            --no-codesign \
+            --debug \
+            --verbose \
+            --track-widget-creation \
+            2>&1 | tee /tmp/flutter_build.log
+          
+          # Анализ логов для поиска реальной ошибки
+          echo "=== Error Analysis ==="
+          grep -A 10 -B 5 "error:" /tmp/flutter_build.log || echo "No error patterns found"
+          grep -A 10 -B 5 "Exception:" /tmp/flutter_build.log || echo "No exceptions found"
+          grep -A 10 -B 5 "Failed" /tmp/flutter_build.log || echo "No failure patterns found"
+          
+          # Сохраняем логи
+          mkdir -p diagnostic_logs
+          cp /tmp/flutter_build.log diagnostic_logs/
+          
+      - name: Try alternative build method
+        script: |
+          # Пробуем собрать напрямую через xcodebuild
+          cd ios
+          
+          # Сначала pods
+          pod install --repo-update --verbose
+          
+          # Прямая сборка
+          xcodebuild build \
+            -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -sdk iphonesimulator \
+            -destination "generic/platform=iOS Simulator" \
+            CODE_SIGNING_ALLOWED=NO \
+            ONLY_ACTIVE_ARCH=YES \
+            -verbose 2>&1 | tee /tmp/xcode_build.log
+          
+          # Анализ ошибок xcodebuild
+          grep -A 5 -B 5 "error:" /tmp/xcode_build.log | head -20
+          
+          cd ..
+          
+      - name: Check build results
+        script: |
+          # Проверяем результаты обеих попыток
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Flutter build succeeded"
+            exit 0
+          elif [ -d "ios/build/Debug-iphonesimulator/Runner.app" ]; then
+            echo "✅ Xcode build succeeded"
+            mkdir -p artifacts
+            cp -R ios/build/Debug-iphonesimulator/Runner.app artifacts/
+            exit 0
+          else
+            echo "❌ All build attempts failed"
+            echo "Showing recent errors:"
+            tail -50 /tmp/flutter_build.log
+            exit 1
+          fi
+    
+    artifacts:
+      - diagnostic_logs/flutter_build.log
+      - diagnostic_logs/xcode_build.log
+      - artifacts/Runner.app
