@@ -6,27 +6,70 @@ workflows:
       flutter: stable
     
     scripts:
-      - name: Setup Flutter environment
+      - name: Flutter doctor and diagnostics
         script: |
+          echo "=== Flutter Doctor ==="
           flutter doctor -v
+          echo ""
+          echo "=== Flutter Version ==="
           flutter --version
-          
-      - name: Clean and install dependencies
+          echo ""
+          echo "=== Xcode Version ==="
+          xcodebuild -version
+          echo ""
+          echo "=== Project Structure ==="
+          ls -la
+          echo ""
+          echo "=== iOS Directory ==="
+          ls -la ios/ 2>/dev/null || echo "No ios directory"
+      
+      - name: Clean and setup
         script: |
           flutter clean
           flutter pub get
           flutter pub upgrade
           
-      - name: Build for iOS simulator
+          # Очистка iOS кэша
+          cd ios
+          rm -rf Pods Podfile.lock
+          pod cache clean --all
+          cd ..
+      
+      - name: Build with verbose logging
         script: |
-          flutter build ios --simulator --no-codesign --debug --verbose
+          # Сборка с максимально подробным выводом
+          flutter build ios \
+            --simulator \
+            --no-codesign \
+            --debug \
+            --verbose \
+            2>&1 | tee build_log.txt
           
-      - name: Collect build artifacts
+          # Сохраняем логи для анализа
+          mkdir -p logs
+          cp build_log.txt logs/
+          
+          # Проверяем наличие приложения
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Build successful despite warnings"
+          else
+            echo "❌ Build failed completely"
+            echo "Showing errors from log:"
+            grep -i error build_log.txt | head -20
+            exit 1
+          fi
+      
+      - name: Collect artifacts
         script: |
           mkdir -p artifacts
-          cp -R build/ios/iphonesimulator/Runner.app artifacts/
-          echo "Build contents:"
-          find artifacts/ -name "*.app" -type d
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            cp -R build/ios/iphonesimulator/Runner.app artifacts/
+            echo "✅ App packaged successfully"
+          else
+            echo "⚠️  No app found, checking alternatives..."
+            find . -name "*.app" -type d
+          fi
     
     artifacts:
       - artifacts/Runner.app
+      - logs/build_log.txt
