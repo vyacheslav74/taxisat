@@ -2,7 +2,11 @@ workflows:
   ios-simulator:
     name: iOS Simulator Build
     environment:
-      xcode: latest
+      # УБРАТЬ ios_signing полностью для симулятора
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        
     
     scripts:
       - name: Install dependencies
