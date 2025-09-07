@@ -3,30 +3,49 @@ workflows:
     name: iOS Simulator Build
     environment:
       xcode: latest
-      vars:
-        XCODE_SCHEME: "Runner"
+      node: 18.0.0
+      cocoapods: default
     
     scripts:
-      - name: Verify iOS project
+      - name: Check project structure
         script: |
-          if [ ! -d "ios" ]; then
-            echo "❌ iOS directory not found"
-            exit 1
-          fi
-          
-          if [ ! -d "ios/Runner.xcworkspace" ]; then
-            echo "⚠️  Workspace not found, generating..."
-            cd ios
-            pod install
-            cd ..
+          echo "=== Project Structure ==="
+          ls -la
+          echo ""
+          echo "=== iOS Directory ==="
+          ls -la ios/
+          echo ""
+          echo "=== Flutter? ==="
+          if [ -f "pubspec.yaml" ]; then
+            echo "Flutter project detected"
+            cat pubspec.yaml | head -10
           fi
       
-      - name: Build Runner
+      - name: Clean and setup
+        script: |
+          # Очистка предыдущих сборок
+          cd ios
+          rm -rf build Pods Podfile.lock
+          pod install --repo-update --verbose
+          cd ..
+      
+      - name: Build with detailed logs
         script: |
           cd ios
+          
+          # Сборка с подробным выводом ошибок
           xcodebuild build \
             -workspace Runner.xcworkspace \
             -scheme Runner \
             -destination "generic/platform=iOS Simulator" \
             CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=YES
+            ONLY_ACTIVE_ARCH=YES \
+            -verbose 2>&1 | tee build_log.txt
+          
+          # Проверка кода ошибки
+          if [ $? -ne 0 ]; then
+            echo "❌ Build failed. Showing errors:"
+            grep -i error build_log.txt | head -20
+            grep -A 5 -B 5 "error:" build_log.txt | head -30
+            exit 1
+          fi
