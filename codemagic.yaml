@@ -6,22 +6,13 @@ workflows:
       flutter: stable
     
     scripts:
-      - name: Enable Flutter verbose logging
-        script: |
-          export FLUTTER_VERBOSE_LOGGING=true
-          export VERBOSE_SCRIPT_LOGGING=true
-          
       - name: Flutter environment setup
         script: |
-          echo "=== Detailed Environment ==="
+          echo "=== Flutter Version ==="
+          flutter --version
+          echo ""
+          echo "=== Flutter Doctor ==="
           flutter doctor -v
-          echo ""
-          echo "=== Xcode Details ==="
-          xcode-select -p
-          xcodebuild -version
-          echo ""
-          echo "=== CocoaPods ==="
-          pod --version
           
       - name: Clean and prepare
         script: |
@@ -29,76 +20,31 @@ workflows:
           flutter pub get
           flutter pub upgrade
           
-          # Очистка iOS кэша
-          cd ios
-          rm -rf Pods Podfile.lock build DerivedData
-          pod cache clean --all
-          pod repo update
-          cd ..
-          
-      - name: Build with maximum verbosity
+      - name: Build iOS simulator app
         script: |
-          # Сохраняем полные логи сборки
+          # Правильная команда сборки без устаревших флагов
           flutter build ios \
             --simulator \
             --no-codesign \
             --debug \
-            --verbose \
-            --track-widget-creation \
-            2>&1 | tee /tmp/flutter_build.log
+            --verbose
           
-          # Анализ логов для поиска реальной ошибки
-          echo "=== Error Analysis ==="
-          grep -A 10 -B 5 "error:" /tmp/flutter_build.log || echo "No error patterns found"
-          grep -A 10 -B 5 "Exception:" /tmp/flutter_build.log || echo "No exceptions found"
-          grep -A 10 -B 5 "Failed" /tmp/flutter_build.log || echo "No failure patterns found"
-          
-          # Сохраняем логи
-          mkdir -p diagnostic_logs
-          cp /tmp/flutter_build.log diagnostic_logs/
-          
-      - name: Try alternative build method
+      - name: Verify and package build
         script: |
-          # Пробуем собрать напрямую через xcodebuild
-          cd ios
-          
-          # Сначала pods
-          pod install --repo-update --verbose
-          
-          # Прямая сборка
-          xcodebuild build \
-            -workspace Runner.xcworkspace \
-            -scheme Runner \
-            -sdk iphonesimulator \
-            -destination "generic/platform=iOS Simulator" \
-            CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=YES \
-            -verbose 2>&1 | tee /tmp/xcode_build.log
-          
-          # Анализ ошибок xcodebuild
-          grep -A 5 -B 5 "error:" /tmp/xcode_build.log | head -20
-          
-          cd ..
-          
-      - name: Check build results
-        script: |
-          # Проверяем результаты обеих попыток
           if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Flutter build succeeded"
-            exit 0
-          elif [ -d "ios/build/Debug-iphonesimulator/Runner.app" ]; then
-            echo "✅ Xcode build succeeded"
+            echo "✅ Build successful!"
+            echo "App size:"
+            du -sh build/ios/iphonesimulator/Runner.app
+            
+            # Упаковываем артефакты
             mkdir -p artifacts
-            cp -R ios/build/Debug-iphonesimulator/Runner.app artifacts/
-            exit 0
+            cp -R build/ios/iphonesimulator/Runner.app artifacts/
           else
-            echo "❌ All build attempts failed"
-            echo "Showing recent errors:"
-            tail -50 /tmp/flutter_build.log
+            echo "❌ Build failed - app not found"
+            echo "Searching for build artifacts:"
+            find . -name "*.app" -type d
             exit 1
           fi
     
     artifacts:
-      - diagnostic_logs/flutter_build.log
-      - diagnostic_logs/xcode_build.log
       - artifacts/Runner.app
