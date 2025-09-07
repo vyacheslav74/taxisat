@@ -3,39 +3,31 @@ workflows:
     name: iOS Simulator Build
     environment:
       xcode: latest
-      cocoapods: default
+      flutter: stable
     
     scripts:
-      - name: Complete pod reinstallation
+      - name: Flutter clean build
         script: |
-          echo "=== Current directory ==="
-          ls -la
+          # Полная перегенерация проекта
+          flutter clean
+          flutter pub get
           
-          cd ios
-          echo "=== iOS directory before ==="
-          ls -la
-          
-          # Полная очистка
-          rm -rf Pods Podfile.lock Target\ Support\ Files Runner.xcworkspace
-          pod cache clean --all
-          
-          # Принудительная установка
-          pod install --clean-install --repo-update --verbose
-          
-          echo "=== iOS directory after pod install ==="
-          ls -la
-          echo "=== Target Support Files ==="
-          ls -la Target\ Support\ Files/ 2>/dev/null || echo "Not created yet"
-          
-          cd ..
+          # Сборка через flutter command
+          flutter build ios --simulator --no-codesign --verbose --debug
       
-      - name: Build application
+      - name: Locate built app
         script: |
-          cd ios
-          xcodebuild build \
-            -project Runner.xcodeproj \
-            -scheme Runner \
-            -sdk iphonesimulator \
-            -destination "generic/platform=iOS Simulator" \
-            CODE_SIGNING_ALLOWED=NO \
-            ONLY_ACTIVE_ARCH=YES
+          # Ищем собранное приложение
+          APP_PATH=$(find . -name "Runner.app" -type d | head -n 1)
+          if [ -n "$APP_PATH" ]; then
+            echo "✅ App found at: $APP_PATH"
+            mkdir -p artifacts
+            cp -R "$APP_PATH" artifacts/
+          else
+            echo "❌ App not found"
+            find . -name "*.app" -type d
+            exit 1
+          fi
+    
+    artifacts:
+      - artifacts/Runner.app
