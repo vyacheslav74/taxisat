@@ -1,50 +1,23 @@
 workflows:
-  ios-simulator:
-    name: iOS Simulator Build
+  ios-debug:
+    name: iOS Debug Build
     environment:
       xcode: latest
       flutter: stable
     
     scripts:
-      - name: Flutter environment setup
-        script: |
-          echo "=== Flutter Version ==="
-          flutter --version
-          echo ""
-          echo "=== Flutter Doctor ==="
-          flutter doctor -v
-          
-      - name: Clean and prepare
+      - name: Get full error details
         script: |
           flutter clean
           flutter pub get
-          flutter pub upgrade
+          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
           
-      - name: Build iOS simulator app
-        script: |
-          # Правильная команда сборки без устаревших флагов
-          flutter build ios \
-            --simulator \
-            --no-codesign \
-            --debug \
-            --verbose
+          # Сохраняем логи
+          mkdir -p error_logs
+          cp error_log.txt error_logs/
           
-      - name: Verify and package build
-        script: |
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Build successful!"
-            echo "App size:"
-            du -sh build/ios/iphonesimulator/Runner.app
-            
-            # Упаковываем артефакты
-            mkdir -p artifacts
-            cp -R build/ios/iphonesimulator/Runner.app artifacts/
-          else
-            echo "❌ Build failed - app not found"
-            echo "Searching for build artifacts:"
-            find . -name "*.app" -type d
-            exit 1
-          fi
+          # Всегда выходим с ошибкой чтобы увидеть логи
+          exit 1
     
     artifacts:
-      - artifacts/Runner.app
+      - error_logs/error_log.txt
