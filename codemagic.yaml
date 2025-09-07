@@ -1,30 +1,47 @@
 workflows:
-  ios-simulator:
-    name: iOS Simulator Build
+  ios-debug:
+    name: iOS Debug Build
     environment:
       xcode: latest
       flutter: stable
+      node: 18.0.0
     
     scripts:
-      - name: Clean and setup
+      - name: Install flutterfire CLI
+        script: |
+          echo "Installing flutterfire CLI..."
+          dart pub global activate flutterfire_cli
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          flutterfire --version
+          
+      - name: Setup project
         script: |
           flutter clean
           flutter pub get
           
-      - name: Build for simulator
+      - name: Build with disabled firebase scripts
         script: |
-          # Сборка для симулятора
-          flutter build ios --simulator --no-codesign --debug
+          # Временно отключаем скрипты Firebase
+          cd ios
+          if [ -f "Podfile" ]; then
+            # Комментируем проблемные скрипты
+            sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
+          fi
+          cd ..
           
-      - name: Verify build
-        script: |
+          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
+          
+          mkdir -p error_logs
+          cp error_log.txt error_logs/
+          
+          # Правильный выход: проверяем успешность сборки
           if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Build successful! App ready for simulator"
-            du -sh build/ios/iphonesimulator/Runner.app
+            echo "✅ Build successful!"
+            exit 0
           else
-            echo "❌ Build failed - no app found"
+            echo "❌ Build failed"
             exit 1
           fi
-    
-    artifacts:
-      - build/ios/iphonesimulator/Runner.app
+		  
+	 artifacts:
+      - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
