@@ -6,11 +6,11 @@ workflows:
       flutter: stable
     
     scripts:
-      - name: Get full error details
+      - name: Get full error details with null safety disabled
         script: |
           flutter clean
           flutter pub get
-          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
+          flutter build ios --simulator --no-codesign --no-sound-null-safety --verbose 2>&1 | tee error_log.txt
           
           # Сохраняем логи
           mkdir -p error_logs
