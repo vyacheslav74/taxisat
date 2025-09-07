@@ -23,11 +23,9 @@ workflows:
           xcodebuild build \
             -workspace "ios/$XCODE_WORKSPACE" \
             -scheme "$XCODE_SCHEME" \
-            -destination "platform=iOS Simulator,name=$SIMULATOR_DEVICE,OS=$SIMULATOR_OS" \
+            -destination "platform=iOS Simulator,name=$CM_SIMULATOR_DEVICE" \
             -sdk iphonesimulator \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            ONLY_ACTIVE_ARCH=YES
+            CODE_SIGNING_ALLOWED=NO
       
       - name: Find and archive .app file
         script: |
