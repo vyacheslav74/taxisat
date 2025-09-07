@@ -4,7 +4,7 @@ workflows:
     environment:
       xcode: latest
       flutter: stable
-      node: 18.0.0  # Нужен для flutterfire
+      node: 18.0.0
     
     scripts:
       - name: Install flutterfire CLI
@@ -33,7 +33,15 @@ workflows:
           
           mkdir -p error_logs
           cp error_log.txt error_logs/
-          exit 1
+          
+          # Правильный выход: проверяем успешность сборки
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Build successful!"
+            exit 0
+          else
+            echo "❌ Build failed"
+            exit 1
+          fi
     
     artifacts:
       - error_logs/error_log.txt
