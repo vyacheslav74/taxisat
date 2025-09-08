@@ -19,13 +19,14 @@ workflows:
           flutter clean
           flutter pub get
           
-      - name: Build with firebase scripts
+      - name: Build with disabled firebase scripts
         script: |
-          
+          # Временно отключаем скрипты Firebase
           cd ios
           if [ -f "Podfile" ]; then
             # Комментируем проблемные скрипты
             sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
+            
           fi
           cd ..
           
@@ -44,4 +45,4 @@ workflows:
           fi
     
     artifacts:
-       - build/ios/iphonesimulator/Runner.app
+       - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
