@@ -3,7 +3,7 @@ workflows:
     name: iOS Build
     environment:
       flutter: "3.32.0"
-      xcode: "15.4"  # Явно указываем версию Xcode
+      xcode: "15.4"
     scripts:
       - name: Setup environment
         script: |
@@ -16,14 +16,15 @@ workflows:
         script: |
           mkdir -p ios/Flutter
           cat > ios/Flutter/Generated.xcconfig << 'EOL'
-FLUTTER_ROOT=$FLUTTER_ROOT
-FLUTTER_APPLICATION_PATH=$CM_BUILD_DIR
+FLUTTER_ROOT=/Users/builder/programs/flutter
+FLUTTER_APPLICATION_PATH=/Users/builder/clone
 FLUTTER_TARGET=lib/main.dart
 FLUTTER_BUILD_DIR=build
 FLUTTER_BUILD_NAME=1.0.0
 FLUTTER_BUILD_NUMBER=1
 APPLICATION_PATH=.
 EOL
+          cat ios/Flutter/Generated.xcconfig
 
       - name: Get dependencies
         script: |
@@ -38,13 +39,9 @@ EOL
 
       - name: Build with detailed logging
         script: |
-          # Очищаем предыдущие сборки
           flutter clean
-          
-          # Собираем с подробным логированием
           flutter build ios --simulator --no-codesign --verbose 2>&1 | tee build_log.txt
           
-          # Если сборка не удалась, показываем логи
           if [ ! -d "build/ios/iphonesimulator/Runner.app" ]; then
             echo "❌ Build failed, showing logs:"
             tail -100 build_log.txt
