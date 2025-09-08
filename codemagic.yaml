@@ -1,16 +1,42 @@
 workflows:
   ios-debug:
-    name: iOS Build Skip Pods
+    name: iOS Build with Pod Fix
     environment:
       flutter: "3.32.0"
+      xcode: "15.4"
     scripts:
-      - name: Setup without pods
+      - name: Clean environment
+        script: |
+          echo "=== Cleaning environment ==="
+          flutter clean
+          rm -rf ios/Pods
+          rm -f ios/Podfile.lock
+          rm -rf ~/.cocoapods/repos
+          
+      - name: Reinstall CocoaPods
+        script: |
+          echo "=== Reinstalling CocoaPods ==="
+          sudo gem uninstall cocoapods -a -x
+          sudo gem install cocoapods -v 1.15.2
+          pod --version
+          pod setup
+          
+      - name: Create Generated.xcconfig
         script: |
           mkdir -p ios/Flutter
           echo "FLUTTER_ROOT=/Users/builder/programs/flutter" > ios/Flutter/Generated.xcconfig
           echo "FLUTTER_APPLICATION_PATH=/Users/builder/clone" >> ios/Flutter/Generated.xcconfig
           
-      - name: Build without pod install
+      - name: Install pods with retry
         script: |
-          # Пропускаем pod install и собираем напрямую
-          flutter build ios --simulator --no-codesign --no-pod-install
+          cd ios
+          echo "=== Installing pods ==="
+          pod install --repo-update --verbose || \
+          (echo "First attempt failed, retrying..." && \
+           pod repo update && \
+           pod install --verbose)
+          cd ..
+          
+      - name: Build
+        script: |
+          flutter build ios --simulator --no-codesign
