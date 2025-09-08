@@ -1,11 +1,31 @@
 workflows:
-  ios-simulator-build:
-    name: iOS Simulator Build
+  ios-debug:
+    name: iOS Debug Pipeline
     environment:
       flutter: "3.19.0"
+    cache:
+      cache_paths:
+        - ~/.pub-cache
+        - ios/Pods
     scripts:
-      - name: Build for iOS simulator
+      - name: Install CocoaPods
         script: |
-          flutter build ios --simulator --no-codesign
+          gem install cocoapods
+      - name: Get dependencies
+        script: |
+          flutter pub get
+          cd ios && pod install && cd ..
+      - name: Build for simulator
+        script: |
+          flutter build ios --simulator --no-codesign --verbose
+      - name: Test build
+        script: |
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Build successful!"
+          else
+            echo "❌ Build failed"
+            exit 1
+          fi
     artifacts:
-      - build/ios/iphonesimulator/Runner.app
+      - build/ios/iphonesimulator/**/*.app
+      - build/ios/iphonesimulator/**/*.app.dSYM
