@@ -1,94 +1,33 @@
 workflows:
-  ios-debug:
+  ios-debug-workflow:
     name: iOS Debug Build
-on:
-  push:
-    branches: [ main, develop ]
-  pull_request:
-    branches: [ main ]
-
-jobs:
-  ios-debug:
-    name: iOS Debug Build
-    runs-on: macos-latest
-    
-    steps:
-    - name: Checkout code
-      uses: actions/checkout@v4
-
-    - name: Setup Flutter
-      uses: subosito/flutter-action@v2
-      with:
-        flutter-version: '3.19.0'  # Укажите вашу версию
-        channel: 'stable'
-
-    - name: Setup Java
-      uses: actions/setup-java@v3
-      with:
-        distribution: 'zulu'
-        java-version: '11'
-
-    - name: Install dependencies
-      run: |
-        sudo gem install cocoapods
-        pod --version
-
-    - name: Install flutterfire CLI
-      run: |
-        echo "Installing flutterfire CLI..."
-        dart pub global activate flutterfire_cli
-        echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
-        flutterfire --version
-
-    - name: Get Flutter packages
-      run: |
-        flutter clean
-        flutter pub get
-
-    - name: Setup iOS dependencies
-      run: |
-        cd ios
-        pod install
-        cd ..
-
-    - name: Build iOS (simulator)
-      run: |
-        # Временно отключаем скрипты Firebase если есть
-        cd ios
-        if [ -f "Podfile" ]; then
-          # Создаем backup
-          cp Podfile Podfile.backup
-          # Комментируем проблемные скрипты
-          sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
-        fi
-        cd ..
-        
-        # Пробуем собрать
-        flutter build ios --simulator --no-codesign --verbose
-        
-        # Проверяем успешность сборки
-        if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-          echo "✅ Build successful!"
-        else
-          echo "❌ Build failed"
-          exit 1
-        fi
-
-    - name: Upload build artifacts
-      if: success()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ios-debug-build
-        path: |
-          build/ios/iphonesimulator/Runner.app
-          build/ios/iphonesimulator/Runner.app.dSYM
-
-    - name: Upload error logs
-      if: failure()
-      uses: actions/upload-artifact@v3
-      with:
-        name: ios-error-logs
-        path: |
-          flutter-build-log.txt
-          ios/Podfile.lock
-          ios/Pods/Manifest.lock
+    max_build_duration: 60
+    environment:
+      groups:
+        - app_store_credentials # Для сертификатов (опционально)
+      vars:
+        XCODE_WORKSPACE: "Runner.xcworkspace"
+        XCODE_SCHEME: "Runner"
+        BUNDLE_ID: "com.yourcompany.yourapp" # Замените на ваш
+        FLUTTER_VERSION: "3.19.0"
+    scripts:
+      - name: Set up Flutter
+        script: |
+          flutter config --no-analytics
+          flutter doctor -v
+      - name: Get packages
+        script: |
+          flutter packages pub get
+      - name: Install pods
+        script: |
+          cd ios && pod install && cd ..
+      - name: Build iOS
+        script: |
+          flutter build ios --simulator --no-codesign --verbose
+    artifacts:
+      - build/ios/iphonesimulator/**/*.app
+      - build/ios/iphonesimulator/**/*.app.dSYM
+    publishing:
+      email:
+        recipients:
+          - your-email@example.com
