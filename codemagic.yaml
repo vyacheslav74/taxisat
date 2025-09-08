@@ -19,9 +19,9 @@ workflows:
           flutter clean
           flutter pub get
           
-      - name: Build with disabled firebase scripts
+      - name: Build with firebase scripts
         script: |
-          # Временно отключаем скрипты Firebase
+          
           cd ios
           if [ -f "Podfile" ]; then
             # Комментируем проблемные скрипты
