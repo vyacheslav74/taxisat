@@ -1,8 +1,6 @@
 workflows:
   ios-debug:
-
-name: iOS Debug Build
-
+    name: iOS Debug Build
 on:
   push:
     branches: [ main, develop ]
