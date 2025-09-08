@@ -1,3 +1,6 @@
+workflows:
+  ios-debug:
+
 name: iOS Debug Build
 
 on:
