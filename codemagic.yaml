@@ -21,33 +21,18 @@ workflows:
           echo "FLUTTER_BUILD_DIR=build" >> ios/Flutter/Generated.xcconfig
           echo "FLUTTER_BUILD_NAME=1.0.0" >> ios/Flutter/Generated.xcconfig
           echo "FLUTTER_BUILD_NUMBER=1" >> ios/Flutter/Generated.xcconfig
-          echo "APPLICATION_PATH=." >> ios/Flutter/Generated.xcconfig
-          echo "Generated.xcconfig content:"
-          cat ios/Flutter/Generated.xcconfig
 
-      - name: Get dependencies
-        script: |
-          flutter pub get
-
-      - name: Install pods
+      - name: Update Firebase pods
         script: |
           cd ios
+          # Обновляем Firebase до совместимой версии
+          pod update FirebaseCoreInternal FirebaseCore
           pod install --repo-update
           cd ..
 
-      - name: Build with detailed logging
+      - name: Build
         script: |
-          flutter clean
           flutter build ios --simulator --no-codesign --verbose
-
-      - name: Verify build
-        script: |
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Build successful!"
-          else
-            echo "❌ Build failed"
-            exit 1
-          fi
 
     artifacts:
       - build/ios/iphonesimulator/**/*.app
