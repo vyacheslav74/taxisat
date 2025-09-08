@@ -2,7 +2,7 @@
 platform :ios, '14.0'
 
 # Фиксируем совместимые версии
-pod 'GoogleDataTransport', '9.3.1'
+pod 'GoogleDataTransport', '9.3.0'
 pod 'FirebaseCore', '10.24.0'
 pod 'FirebaseMessaging', '10.24.0'
 pod 'FirebaseCrashlytics', '10.24.0'
