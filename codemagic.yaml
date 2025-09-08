@@ -1,38 +1,32 @@
 workflows:
   ios-debug:
-    name: iOS Build
+    name: iOS Build without Firebase
     environment:
       flutter: "3.32.0"
-      xcode: "15.4"
     scripts:
-      - name: Setup environment
-        script: |
-          echo "Flutter version:"
-          flutter --version
-          echo "Xcode version:"
-          xcodebuild -version
-          
-      - name: Create Generated.xcconfig
+      - name: Setup
         script: |
           mkdir -p ios/Flutter
           echo "FLUTTER_ROOT=/Users/builder/programs/flutter" > ios/Flutter/Generated.xcconfig
           echo "FLUTTER_APPLICATION_PATH=/Users/builder/clone" >> ios/Flutter/Generated.xcconfig
           echo "FLUTTER_TARGET=lib/main.dart" >> ios/Flutter/Generated.xcconfig
-          echo "FLUTTER_BUILD_DIR=build" >> ios/Flutter/Generated.xcconfig
-          echo "FLUTTER_BUILD_NAME=1.0.0" >> ios/Flutter/Generated.xcconfig
-          echo "FLUTTER_BUILD_NUMBER=1" >> ios/Flutter/Generated.xcconfig
 
-      - name: Update Firebase pods
+      - name: Modify Podfile to exclude Firebase for simulator
         script: |
           cd ios
-          # Обновляем Firebase до совместимой версии
-          pod update FirebaseCoreInternal FirebaseCore
+          # Создаем backup
+          cp Podfile Podfile.backup
+          # Комментируем Firebase pods для симулятора
+          sed -i '' 's/^.*Firebase.*$/# &/' Podfile
           pod install --repo-update
           cd ..
 
-      - name: Build
+      - name: Build without Firebase
         script: |
-          flutter build ios --simulator --no-codesign --verbose
+          flutter build ios --simulator --no-codesign
 
-    artifacts:
-      - build/ios/iphonesimulator/**/*.app
+      - name: Restore Podfile
+        script: |
+          cd ios
+          mv Podfile.backup Podfile
+          cd ..
