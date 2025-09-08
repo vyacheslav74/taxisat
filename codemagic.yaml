@@ -1,63 +1,66 @@
 workflows:
   ios-debug:
-    name: iOS Simple Build
+    name: iOS Build
     environment:
-      flutter: "3.32.0"  # Используем совместимую версию
+      flutter: "3.32.0"
+      xcode: "15.4"  # Явно указываем версию Xcode
     scripts:
-      - name: Check Flutter version
+      - name: Setup environment
         script: |
+          echo "Flutter version:"
           flutter --version
-          echo "CM_BUILD_DIR: $CM_BUILD_DIR"
+          echo "Xcode version:"
+          xcodebuild -version
           
-      - name: Setup dependencies with retry
+      - name: Create Generated.xcconfig
+        script: |
+          mkdir -p ios/Flutter
+          cat > ios/Flutter/Generated.xcconfig << 'EOL'
+FLUTTER_ROOT=$FLUTTER_ROOT
+FLUTTER_APPLICATION_PATH=$CM_BUILD_DIR
+FLUTTER_TARGET=lib/main.dart
+FLUTTER_BUILD_DIR=build
+FLUTTER_BUILD_NAME=1.0.0
+FLUTTER_BUILD_NUMBER=1
+APPLICATION_PATH=.
+EOL
+
+      - name: Get dependencies
+        script: |
+          flutter pub get
+
+      - name: Install pods with clean install
+        script: |
+          cd ios
+          pod deintegrate
+          pod install --repo-update --clean-install
+          cd ..
+
+      - name: Build with detailed logging
         script: |
           # Очищаем предыдущие сборки
           flutter clean
-          rm -rf ios/Pods
-          rm -f ios/Podfile.lock
           
-          # Получаем зависимости Flutter
-          echo "Running flutter pub get..."
-          flutter pub get
+          # Собираем с подробным логированием
+          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee build_log.txt
           
-          # Проверяем наличие Generated.xcconfig
-          echo "Checking for Generated.xcconfig..."
-          if [ -f "ios/Flutter/Generated.xcconfig" ]; then
-            echo "✅ Generated.xcconfig exists"
-            cat ios/Flutter/Generated.xcconfig
-          else
-            echo "❌ Generated.xcconfig missing, trying to generate..."
-            # Принудительно генерируем файлы Flutter
-            flutter precache
-            flutter pub get
-          fi
-          
-          # Устанавливаем pods только если конфиг существует
-          if [ -f "ios/Flutter/Generated.xcconfig" ]; then
-            echo "Installing pods..."
-            cd ios && pod install --repo-update && cd ..
-          else
-            echo "Cannot install pods - Generated.xcconfig still missing"
+          # Если сборка не удалась, показываем логи
+          if [ ! -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "❌ Build failed, showing logs:"
+            tail -100 build_log.txt
             exit 1
           fi
-
-      - name: Build for simulator
-        script: |
-          flutter build ios --simulator --no-codesign --verbose
 
       - name: Verify build
         script: |
           if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
             echo "✅ Build successful!"
-            ls -la build/ios/iphonesimulator/
+            du -sh build/ios/iphonesimulator/Runner.app
           else
             echo "❌ Build failed"
-            echo "Contents of build directory:"
-            ls -la build/ || true
-            echo "Contents of ios/Flutter directory:"
-            ls -la ios/Flutter/ || true
             exit 1
           fi
 
     artifacts:
       - build/ios/iphonesimulator/**/*.app
+      - build_log.txt
