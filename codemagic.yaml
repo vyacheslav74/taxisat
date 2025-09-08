@@ -1,33 +1,11 @@
 workflows:
-  ios-debug:
-    name: iOS Debug Build
-    max_build_duration: 60
+  ios-simulator-build:
+    name: iOS Simulator Build
     environment:
-      groups:
-        - app_store_credentials # Для сертификатов (опционально)
-      vars:
-        XCODE_WORKSPACE: "Runner.xcworkspace"
-        XCODE_SCHEME: "Runner"
-        BUNDLE_ID: "com.yourcompany.yourapp" # Замените на ваш
-        FLUTTER_VERSION: "3.19.0"
+      flutter: "3.19.0"
     scripts:
-      - name: Set up Flutter
+      - name: Build for iOS simulator
         script: |
-          flutter config --no-analytics
-          flutter doctor -v
-      - name: Get packages
-        script: |
-          flutter packages pub get
-      - name: Install pods
-        script: |
-          cd ios && pod install && cd ..
-      - name: Build iOS
-        script: |
-          flutter build ios --simulator --no-codesign --verbose
+          flutter build ios --simulator --no-codesign
     artifacts:
-      - build/ios/iphonesimulator/**/*.app
-      - build/ios/iphonesimulator/**/*.app.dSYM
-    publishing:
-      email:
-        recipients:
-          - your-email@example.com
+      - build/ios/iphonesimulator/Runner.app
