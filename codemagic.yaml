@@ -2,7 +2,7 @@ workflows:
   ios-debug:
     name: iOS Simple Build
     environment:
-      flutter: "3.6.0"  # Используем совместимую версию
+      flutter: "3.19.0"  # Используем совместимую версию
     scripts:
       - name: Check Flutter version
         script: |
