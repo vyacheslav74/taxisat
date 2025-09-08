@@ -10,22 +10,61 @@ workflows:
     scripts:
       - name: Install CocoaPods
         script: |
-          gem install cocoapods
-      - name: Get dependencies
+          sudo gem install cocoapods
+          pod --version
+
+      - name: Flutter setup
         script: |
           flutter pub get
-          cd ios && pod install && cd ..
+          flutter precache
+
+      - name: Generate Flutter config
+        script: |
+          echo "Generating Flutter configuration..."
+          # Принудительно генерируем необходимые файлы
+          cd ios
+          flutter pub get
+          cd ..
+          # Проверяем наличие Generated.xcconfig
+          if [ -f "ios/Flutter/Generated.xcconfig" ]; then
+            echo "✅ Generated.xcconfig exists"
+            cat ios/Flutter/Generated.xcconfig
+          else
+            echo "⚠️  Generated.xcconfig not found, creating manually..."
+            # Создаем базовый конфиг если отсутствует
+            mkdir -p ios/Flutter
+            cat > ios/Flutter/Generated.xcconfig << EOL
+FLUTTER_ROOT=$HOME/programs/flutter
+FLUTTER_APPLICATION_PATH=$CM_BUILD_DIR
+FLUTTER_TARGET=lib/main.dart
+FLUTTER_BUILD_DIR=build
+FLUTTER_BUILD_NAME=1.0.0
+FLUTTER_BUILD_NUMBER=1
+APPLICATION_PATH=.
+EOL
+          fi
+
+      - name: Install pods
+        script: |
+          cd ios
+          pod install --repo-update
+          cd ..
+
       - name: Build for simulator
         script: |
           flutter build ios --simulator --no-codesign --verbose
+
       - name: Test build
         script: |
           if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
             echo "✅ Build successful!"
           else
             echo "❌ Build failed"
+            # Показываем содержимое директории для диагностики
+            ls -la build/ios/iphonesimulator/ || true
             exit 1
           fi
+
     artifacts:
       - build/ios/iphonesimulator/**/*.app
       - build/ios/iphonesimulator/**/*.app.dSYM
