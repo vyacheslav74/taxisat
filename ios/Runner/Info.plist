@@ -66,10 +66,10 @@
 				<key>CFBundleTypeRole</key>
 				<string>Editor</string>
 				<key>CFBundleURLName</key>
-				<string>com.ridy.taxi.rider</string>
+				<string>com.satka.taxi.rider</string>
 				<key>CFBundleURLSchemes</key>
 				<array>
-					<string>com.ridy.taxi.rider</string>
+					<string>com.satka.taxi.rider</string>
 				</array>
 			</dict>
 		</array>
