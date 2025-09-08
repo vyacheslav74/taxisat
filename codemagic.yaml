@@ -1,48 +1,93 @@
-workflows:
+name: iOS Debug Build
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
   ios-debug:
     name: iOS Debug Build
-    environment:
-      xcode: latest
-      flutter: stable
-      node: 18.0.0
+    runs-on: macos-latest
     
-    scripts:
-      - name: Install flutterfire CLI
-        script: |
-          echo "Installing flutterfire CLI..."
-          dart pub global activate flutterfire_cli
-          export PATH="$PATH:$HOME/.pub-cache/bin"
-          flutterfire --version
-          
-      - name: Setup project
-        script: |
-          flutter clean
-          flutter pub get
-          
-      - name: Build with disabled firebase scripts
-        script: |
-          # Временно отключаем скрипты Firebase
-          cd ios
-          if [ -f "Podfile" ]; then
-            # Комментируем проблемные скрипты
-            sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
-            
-          fi
-          cd ..
-          
-          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
-          
-          mkdir -p error_logs
-          cp error_log.txt error_logs/
-          
-          # Правильный выход: проверяем успешность сборки
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Build successful!"
-            exit 0
-          else
-            echo "❌ Build failed"
-            exit 1
-          fi
-    
-    artifacts:
-       - build/ios/iphonesimulator/Runner.app
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Flutter
+      uses: subosito/flutter-action@v2
+      with:
+        flutter-version: '3.19.0'  # Укажите вашу версию
+        channel: 'stable'
+
+    - name: Setup Java
+      uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: '11'
+
+    - name: Install dependencies
+      run: |
+        sudo gem install cocoapods
+        pod --version
+
+    - name: Install flutterfire CLI
+      run: |
+        echo "Installing flutterfire CLI..."
+        dart pub global activate flutterfire_cli
+        echo "$HOME/.pub-cache/bin" >> $GITHUB_PATH
+        flutterfire --version
+
+    - name: Get Flutter packages
+      run: |
+        flutter clean
+        flutter pub get
+
+    - name: Setup iOS dependencies
+      run: |
+        cd ios
+        pod install
+        cd ..
+
+    - name: Build iOS (simulator)
+      run: |
+        # Временно отключаем скрипты Firebase если есть
+        cd ios
+        if [ -f "Podfile" ]; then
+          # Создаем backup
+          cp Podfile Podfile.backup
+          # Комментируем проблемные скрипты
+          sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
+        fi
+        cd ..
+        
+        # Пробуем собрать
+        flutter build ios --simulator --no-codesign --verbose
+        
+        # Проверяем успешность сборки
+        if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+          echo "✅ Build successful!"
+        else
+          echo "❌ Build failed"
+          exit 1
+        fi
+
+    - name: Upload build artifacts
+      if: success()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-debug-build
+        path: |
+          build/ios/iphonesimulator/Runner.app
+          build/ios/iphonesimulator/Runner.app.dSYM
+
+    - name: Upload error logs
+      if: failure()
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-error-logs
+        path: |
+          flutter-build-log.txt
+          ios/Podfile.lock
+          ios/Pods/Manifest.lock
