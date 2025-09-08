@@ -1,58 +1,16 @@
 workflows:
   ios-debug:
-    name: iOS Build without Firebase
+    name: iOS Build Skip Pods
     environment:
       flutter: "3.32.0"
     scripts:
-      - name: Setup without Firebase
+      - name: Setup without pods
         script: |
           mkdir -p ios/Flutter
           echo "FLUTTER_ROOT=/Users/builder/programs/flutter" > ios/Flutter/Generated.xcconfig
           echo "FLUTTER_APPLICATION_PATH=/Users/builder/clone" >> ios/Flutter/Generated.xcconfig
-          echo "FLUTTER_TARGET=lib/main.dart" >> ios/Flutter/Generated.xcconfig
-
-      - name: Disable Firebase in Podfile
-        script: |
-          cd ios
-          cp Podfile Podfile.backup
-          # Комментируем все Firebase pods
-          sed -i '' '/Firebase/d' Podfile
-          sed -i '' '/firebase/d' Podfile
-          sed -i '' '/crashlytics/d' Podfile
-          pod install --repo-update
-          cd ..
-
-      - name: Disable Firebase in Xcode project
-        script: |
-          cd ios
-          # Отключаем Firebase скрипты в Xcode project
-          python3 -c "
-          import plistlib
-          import os
           
-          # Находим project.pbxproj и отключаем Firebase скрипты
-          if os.path.exists('Runner.xcodeproj/project.pbxproj'):
-              with open('Runner.xcodeproj/project.pbxproj', 'r') as f:
-                  content = f.read()
-              
-              # Отключаем Crashlytics и Firebase скрипты
-              content = content.replace('FLTFirebaseCrashlyticsPlugin', '# FLTFirebaseCrashlyticsPlugin')
-              content = content.replace('FLTFirebaseMessagingPlugin', '# FLTFirebaseMessagingPlugin')
-              
-              with open('Runner.xcodeproj/project.pbxproj', 'w') as f:
-                  f.write(content)
-          "
-          cd ..
-
-      - name: Build without Firebase
+      - name: Build without pod install
         script: |
-          flutter build ios --simulator --no-codesign --verbose
-
-      - name: Restore original config
-        script: |
-          cd ios
-          mv Podfile.backup Podfile
-          cd ..
-
-    artifacts:
-      - build/ios/iphonesimulator/**/*.app
+          # Пропускаем pod install и собираем напрямую
+          flutter build ios --simulator --no-codesign --no-pod-install
