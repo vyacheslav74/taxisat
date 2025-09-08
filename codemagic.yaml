@@ -15,44 +15,35 @@ workflows:
       - name: Create Generated.xcconfig
         script: |
           mkdir -p ios/Flutter
-          cat > ios/Flutter/Generated.xcconfig << 'EOL'
-FLUTTER_ROOT=/Users/builder/programs/flutter
-FLUTTER_APPLICATION_PATH=/Users/builder/clone
-FLUTTER_TARGET=lib/main.dart
-FLUTTER_BUILD_DIR=build
-FLUTTER_BUILD_NAME=1.0.0
-FLUTTER_BUILD_NUMBER=1
-APPLICATION_PATH=.
-EOL
+          echo "FLUTTER_ROOT=/Users/builder/programs/flutter" > ios/Flutter/Generated.xcconfig
+          echo "FLUTTER_APPLICATION_PATH=/Users/builder/clone" >> ios/Flutter/Generated.xcconfig
+          echo "FLUTTER_TARGET=lib/main.dart" >> ios/Flutter/Generated.xcconfig
+          echo "FLUTTER_BUILD_DIR=build" >> ios/Flutter/Generated.xcconfig
+          echo "FLUTTER_BUILD_NAME=1.0.0" >> ios/Flutter/Generated.xcconfig
+          echo "FLUTTER_BUILD_NUMBER=1" >> ios/Flutter/Generated.xcconfig
+          echo "APPLICATION_PATH=." >> ios/Flutter/Generated.xcconfig
+          echo "Generated.xcconfig content:"
           cat ios/Flutter/Generated.xcconfig
 
       - name: Get dependencies
         script: |
           flutter pub get
 
-      - name: Install pods with clean install
+      - name: Install pods
         script: |
           cd ios
-          pod deintegrate
-          pod install --repo-update --clean-install
+          pod install --repo-update
           cd ..
 
       - name: Build with detailed logging
         script: |
           flutter clean
-          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee build_log.txt
-          
-          if [ ! -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "❌ Build failed, showing logs:"
-            tail -100 build_log.txt
-            exit 1
-          fi
+          flutter build ios --simulator --no-codesign --verbose
 
       - name: Verify build
         script: |
           if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
             echo "✅ Build successful!"
-            du -sh build/ios/iphonesimulator/Runner.app
           else
             echo "❌ Build failed"
             exit 1
@@ -60,4 +51,3 @@ EOL
 
     artifacts:
       - build/ios/iphonesimulator/**/*.app
-      - build_log.txt
