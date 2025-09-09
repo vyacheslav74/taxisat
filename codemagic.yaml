@@ -66,4 +66,4 @@ workflows:
           fi
     
     artifacts:
-      - taxisat_artifacts.zip
+      - build/ios/iphonesimulator/*.app
