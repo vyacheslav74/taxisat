@@ -1,3 +1,10 @@
+workflows:
+  ios-debug:
+    name: iOS Debug Build
+    environment:
+      xcode: latest
+      flutter: stable
+      
 scripts:
   - name: Build iOS
     script: |
