@@ -1,42 +1,48 @@
 workflows:
   ios-debug:
-    name: iOS Build with Pod Fix
+    name: iOS Debug Build
     environment:
-      flutter: "3.32.0"
-      xcode: "16.0"
+      xcode: latest
+      flutter: stable
+      node: 18.0.0
+    
     scripts:
-      - name: Clean environment
+      - name: Install flutterfire CLI
         script: |
-          echo "=== Cleaning environment ==="
+          echo "Installing flutterfire CLI..."
+          dart pub global activate flutterfire_cli
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          flutterfire --version
+          
+      - name: Setup project
+        script: |
           flutter clean
-          rm -rf ios/Pods
-          rm -f ios/Podfile.lock
-          rm -rf ~/.cocoapods/repos
+          flutter pub get
           
-      - name: Reinstall CocoaPods
+      - name: Build with disabled firebase scripts
         script: |
-          echo "=== Reinstalling CocoaPods ==="
-          sudo gem uninstall cocoapods -a -x
-          sudo gem install cocoapods -v 1.15.2
-          pod --version
-          pod setup
-          
-      - name: Create Generated.xcconfig
-        script: |
-          mkdir -p ios/Flutter
-          echo "FLUTTER_ROOT=/Users/builder/programs/flutter" > ios/Flutter/Generated.xcconfig
-          echo "FLUTTER_APPLICATION_PATH=/Users/builder/clone" >> ios/Flutter/Generated.xcconfig
-          
-      - name: Install pods with retry
-        script: |
+          # Временно отключаем скрипты Firebase
           cd ios
-          echo "=== Installing pods ==="
-          pod install --repo-update --verbose || \
-          (echo "First attempt failed, retrying..." && \
-           pod repo update && \
-           pod install --verbose)
+          if [ -f "Podfile" ]; then
+            # Комментируем проблемные скрипты
+            sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
+            
+          fi
           cd ..
           
-      - name: Build
-        script: |
-          flutter build ios --simulator --no-codesign
+          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
+          
+          mkdir -p error_logs
+          cp error_log.txt error_logs/
+          
+          # Правильный выход: проверяем успешность сборки
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
+            echo "✅ Build successful!"
+            exit 0
+          else
+            echo "❌ Build failed"
+            exit 1
+          fi
+    
+    artifacts:
+       - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
