@@ -7,9 +7,6 @@ project 'Runner', {
   'Release' => :release,
 }
 
- pod 'FirebaseAnalytics', '11.6.0'
-
-
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
@@ -28,10 +25,12 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks! :linkage => :static  # Измените на static
+  use_frameworks! :linkage => :static
   use_modular_headers!
 
-  # Уберите явные версии Firebase - пусть Flutter управляет ими
+  # УБЕРИТЕ явное указание версий Firebase - они должны быть в pubspec.yaml
+  # pod 'FirebaseAnalytics', '11.6.0'  # УДАЛИТЕ эту строку
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
 
