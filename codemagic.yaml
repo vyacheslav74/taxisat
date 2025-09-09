@@ -45,4 +45,4 @@ workflows:
           fi
     
     artifacts:
-       - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
+       - build/ios/iphonesimulator/*.app
