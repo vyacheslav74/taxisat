@@ -4,70 +4,66 @@ workflows:
     environment:
       xcode: latest
       flutter: stable
-      
-scripts:
-  - name: Build iOS
-    script: |
-      # Создаем каталог для логов
-      mkdir -p error_logs
-      
-      # Пытаемся собрать проект с Firebase
-      if flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_logs/build_log.txt; then
-        echo "✅ Build successful with Firebase!"
-        # Убедимся что артефакты существуют
-        if [ -d "build/ios/iphonesimulator" ]; then
-          echo "Artifacts found at build/ios/iphonesimulator/"
-          ls -la build/ios/iphonesimulator/
-        else
-          echo "❌ No artifacts found after successful build!"
-          mkdir -p build/ios/iphonesimulator/
-          touch build/ios/iphonesimulator/build_success.txt
-        fi
-      else
-        echo "❌ Build failed, checking for Firebase issues..."
-        
-        # Проверяем наличие Firebase ошибок
-        if grep -q "Firebase\|Google" error_logs/build_log.txt; then
-          echo "🔥 Firebase-related error detected"
-          
-          # Временно удаляем Firebase зависимости
-          echo "Temporarily removing Firebase..."
-          flutter pub remove firebase_core firebase_messaging firebase_analytics firebase_crashlytics 2>/dev/null || true
-          
-          # Чистим и пробуем снова без Firebase
+      cocoapods: default
+    
+    scripts:
+      - name: Clean and setup
+        script: |
+          echo "=== Cleaning ==="
+          rm -rf /tmp/flutter_*
+          rm -rf /var/folders/*/T/flutter_tools.*
           flutter clean
           rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
           flutter pub get
           
+      - name: Install pods
+        script: |
           cd ios
-          pod install --repo-update
+          pod install --repo-update --verbose
           cd ..
           
-          if flutter build ios --simulator --no-codesign; then
-            echo "✅ Build successful without Firebase!"
-            # Сохраняем артефакты без Firebase
-            mkdir -p build/ios_no_firebase
-            if [ -d "build/ios/iphonesimulator" ]; then
-              cp -r build/ios/iphonesimulator/*.app build/ios_no_firebase/ 2>/dev/null || true
-            else
-              echo "⚠️  No artifacts to copy, creating placeholder"
-              touch build/ios_no_firebase/build_success_no_firebase.txt
-            fi
-            
-            # Восстанавливаем зависимости
-            flutter pub add firebase_core:^2.32.0
-            echo "⚠️  Build succeeded without Firebase. Check Firebase configuration."
+      - name: Build iOS
+        script: |
+          set -e
+          mkdir -p logs
+          
+          # Пытаемся собрать
+          if flutter build ios --simulator --no-codesign --verbose 2>&1 | tee logs/build.log; then
+            echo "✅ Build successful!"
           else
-            echo "❌ Build failed even without Firebase"
+            echo "❌ Build failed"
             exit 1
           fi
-        else
-          echo "❌ Non-Firebase build error"
-          exit 1
-        fi
-      fi
+          
+      - name: Package artifacts
+        script: |
+          echo "=== Packaging artifacts ==="
+          mkdir -p artifact_bundle
+          
+          # Копируем собранное приложение
+          if find build/ios -name "*.app" | grep -q .; then
+            mkdir -p artifact_bundle/app
+            find build/ios -name "*.app" -exec cp -r {} artifact_bundle/app/ \;
+          else
+            echo "⚠️  No .app files found"
+          fi
+          
+          # Копируем логи
+          if [ -d "logs" ]; then
+            cp -r logs/ artifact_bundle/
+          fi
+          
+          # Создаем архив
+          cd artifact_bundle
+          zip -r ../taxisat_artifacts.zip . || true
+          cd ..
+          
+          # Гарантируем что архив существует
+          if [ ! -f "taxisat_artifacts.zip" ]; then
+            echo "Creating empty artifact archive"
+            touch empty.txt
+            zip taxisat_artifacts.zip empty.txt
+          fi
     
     artifacts:
-      - build/ios/iphonesimulator/
-      - build/ios_no_firebase/
-      - error_logs/
+      - taxisat_artifacts.zip
