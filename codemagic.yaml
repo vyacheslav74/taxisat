@@ -34,36 +34,6 @@ workflows:
             echo "❌ Build failed"
             exit 1
           fi
-          
-      - name: Package artifacts
-        script: |
-          echo "=== Packaging artifacts ==="
-          mkdir -p artifact_bundle
-          
-          # Копируем собранное приложение
-          if find build/ios -name "*.app" | grep -q .; then
-            mkdir -p artifact_bundle/app
-            find build/ios -name "*.app" -exec cp -r {} artifact_bundle/app/ \;
-          else
-            echo "⚠️  No .app files found"
-          fi
-          
-          # Копируем логи
-          if [ -d "logs" ]; then
-            cp -r logs/ artifact_bundle/
-          fi
-          
-          # Создаем архив
-          cd artifact_bundle
-          zip -r ../taxisat_artifacts.zip . || true
-          cd ..
-          
-          # Гарантируем что архив существует
-          if [ ! -f "taxisat_artifacts.zip" ]; then
-            echo "Creating empty artifact archive"
-            touch empty.txt
-            zip taxisat_artifacts.zip empty.txt
-          fi
-    
+        
     artifacts:
       - build/ios/iphonesimulator/*.app
