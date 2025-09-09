@@ -3,10 +3,10 @@ platform :ios, '14.0'
 
 # Фиксируем совместимые версии
 pod 'GoogleDataTransport', '9.3.0'
-pod 'FirebaseCore', '10.24.0'
+pod 'FirebaseCore', '11.15.0'
 pod 'FirebaseMessaging', '11.15.0'
-pod 'FirebaseCrashlytics', '10.24.0'
-pod 'FirebaseAnalytics', '10.24.0'
+pod 'FirebaseCrashlytics', '11.15.0'
+pod 'FirebaseAnalytics', '11.15.0'
 
 
 # CocoaPods analytics sends network stats synchronously affecting flutter build latency.
