@@ -82,5 +82,4 @@ workflows:
     
     artifacts:
       - build/ios/iphonesimulator/*.app
-      - error_logs/
-      - ios/Podfile.lock
+
