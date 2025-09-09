@@ -3,7 +3,7 @@ workflows:
     name: iOS Build with Pod Fix
     environment:
       flutter: "3.32.0"
-      xcode: "15.4"
+      xcode: "16.0"
     scripts:
       - name: Clean environment
         script: |
