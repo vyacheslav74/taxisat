@@ -7,6 +7,14 @@ workflows:
       node: 18.0.0
     
     scripts:
+    - name: Clean and setup
+        script: |
+          echo "=== Cleaning ==="
+          rm -rf /tmp/flutter_*
+          rm -rf /var/folders/*/T/flutter_tools.*
+          flutter clean
+          rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
+          flutter pub get
       - name: Install flutterfire CLI
         script: |
           echo "Installing flutterfire CLI..."
