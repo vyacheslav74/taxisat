@@ -32,7 +32,7 @@ target 'Runner' do
   use_modular_headers!
 
   # Добавьте эти строки ДО flutter_install_all_ios_pods
-  pod 'FirebaseCore', '11.15.0'
+  pod 'FirebaseCore', '10.20.0'
   pod 'FirebaseCoreInternal', '11.15.0'
   pod 'FirebaseMessaging', '11.15.0'
   pod 'FirebaseCrashlytics', '11.15.0'
