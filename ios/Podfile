@@ -31,6 +31,9 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
+  # Добавьте эту строку для GoogleMaps
+  pod 'GoogleMaps', '~> 8.4'
+
   # Добавьте эти строки ДО flutter_install_all_ios_pods
   pod 'FirebaseCore', '11.15.0'
   pod 'FirebaseCoreInternal', '11.15.0'
