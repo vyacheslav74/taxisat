@@ -40,6 +40,10 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
+
+        # Добавьте эти настройки для временных файлов
+      config.build_settings['TEMP_DIR'] = '/tmp'
+      config.build_settings['TMPDIR'] = '/tmp'
     end
   end
 end
