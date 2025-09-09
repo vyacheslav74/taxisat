@@ -15,8 +15,9 @@ workflows:
           flutter clean
           rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
           flutter pub get
-        - name: Install flutterfire CLI
-          script: |
+          
+      - name: Install flutterfire CLI
+        script: |
           echo "Installing flutterfire CLI..."
           dart pub global activate flutterfire_cli
           export PATH="$PATH:$HOME/.pub-cache/bin"
@@ -34,7 +35,6 @@ workflows:
           if [ -f "Podfile" ]; then
             # Комментируем проблемные скрипты
             sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
-            
           fi
           cd ..
           
@@ -53,4 +53,5 @@ workflows:
           fi
     
     artifacts:
-       - build/ios/iphonesimulator/*.app
+      - build/ios/iphonesimulator/*.app
+      - error_logs/
