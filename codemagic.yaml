@@ -4,36 +4,45 @@ workflows:
     environment:
       xcode: latest
       flutter: stable
-      cocoapods: default
+      node: 18.0.0
     
     scripts:
-      - name: Clean and setup
+      - name: Install flutterfire CLI
         script: |
-          echo "=== Cleaning ==="
-          rm -rf /tmp/flutter_*
-          rm -rf /var/folders/*/T/flutter_tools.*
+          echo "Installing flutterfire CLI..."
+          dart pub global activate flutterfire_cli
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          flutterfire --version
+          
+      - name: Setup project
+        script: |
           flutter clean
-          rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
           flutter pub get
           
-      - name: Install pods
+      - name: Build with disabled firebase scripts
         script: |
+          # Временно отключаем скрипты Firebase
           cd ios
-          pod install --repo-update --verbose
+          if [ -f "Podfile" ]; then
+            # Комментируем проблемные скрипты
+            sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
+            
+          fi
           cd ..
           
-      - name: Build iOS
-        script: |
-          set -e
-          mkdir -p logs
+          flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
           
-          # Пытаемся собрать
-          if flutter build ios --simulator --no-codesign --verbose 2>&1 | tee logs/build.log; then
+          mkdir -p error_logs
+          cp error_log.txt error_logs/
+          
+          # Правильный выход: проверяем успешность сборки
+          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
             echo "✅ Build successful!"
+            exit 0
           else
             echo "❌ Build failed"
             exit 1
           fi
-        
+    
     artifacts:
-      - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
+       - build/ios/iphonesimulator/*.app
