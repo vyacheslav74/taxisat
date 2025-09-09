@@ -31,10 +31,16 @@ target 'Runner' do
   use_frameworks!
   use_modular_headers!
 
-  # УБЕРИТЕ явное указание версий Firebase здесь!
-  # Вместо этого укажите версии в pubspec.yaml вашего Flutter проекта
-  
+  # Добавьте эти строки ДО flutter_install_all_ios_pods
+  pod 'FirebaseCore', '10.20.0'
+  pod 'FirebaseCoreInternal', '10.16.0'
+  pod 'FirebaseMessaging', '10.20.0'
+  pod 'FirebaseCrashlytics', '10.20.0'
+  pod 'FirebaseAnalytics', '10.20.0'
+  pod 'GoogleDataTransport', '9.2.0'
+
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
+end
   
   target 'RunnerTests' do
     inherit! :search_paths
