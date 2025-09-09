@@ -52,7 +52,7 @@ dependencies:
   # Firebase
   #firebase_analytics: ^11.3.6
   firebase_core: ^2.32.0        # Оставьте 2.x
-  firebase_messaging: ^14.7.10  # Понизьте до 14.x
+  firebase_messaging: ^14.7.0  # Понизьте до 14.x
   #firebase_crashlytics: ^4.2.0
 
 
