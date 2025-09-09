@@ -7,7 +7,7 @@ workflows:
       node: 18.0.0
     
     scripts:
-       - name: Clean temporary directories
+     - name: Clean temporary directories
         script: |
           echo "=== Cleaning temp directories ==="
           rm -rf /tmp/flutter_*
