@@ -51,9 +51,10 @@ dependencies:
 
   # Firebase
   #firebase_analytics: ^11.3.6
-  firebase_core: ^3.8.1
+  firebase_core: ^2.24.0        # Оставьте 2.x
+  firebase_messaging: ^14.7.10  # Понизьте до 14.x
   #firebase_crashlytics: ^4.2.0
-  firebase_messaging: ^15.1.6
+
 
   # UI
   ionicons: 0.2.2
