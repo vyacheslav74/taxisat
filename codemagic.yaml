@@ -7,6 +7,17 @@ workflows:
       node: 18.0.0
     
     scripts:
+       - name: Clean temporary directories
+        script: |
+          echo "=== Cleaning temp directories ==="
+          rm -rf /tmp/flutter_*
+          rm -rf /var/folders/*/T/flutter_tools.*
+          rm -rf $HOME/Library/Developer/Xcode/DerivedData/*
+          
+          # Создайте чистый временный каталог
+          export TMPDIR=$HOME/tmp_build
+          mkdir -p $TMPDIR
+    
       - name: Install flutterfire CLI
         script: |
           echo "Installing flutterfire CLI..."
