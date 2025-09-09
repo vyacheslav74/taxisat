@@ -36,4 +36,4 @@ workflows:
           fi
         
     artifacts:
-      - build/ios/iphonesimulator/*.app
+      - /Users/builder/Library/Developer/Xcode/DerivedData/**/*.app
