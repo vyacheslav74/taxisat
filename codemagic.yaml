@@ -8,7 +8,7 @@ workflows:
     
     scripts:
     - name: Clean and setup
-        script: |
+      script: |
           echo "=== Cleaning ==="
           rm -rf /tmp/flutter_*
           rm -rf /var/folders/*/T/flutter_tools.*
