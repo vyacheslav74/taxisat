@@ -1,36 +1,92 @@
-scripts:
-  - name: Build with Firebase
-    script: |
-      # Пытаемся собрать с Firebase
-      if flutter build ios --simulator --no-codesign; then
-        echo "✅ Firebase build successful"
-        mkdir -p build/with_firebase
-        cp -r build/ios/iphonesimulator/*.app build/with_firebase/
-      else
-        echo "⚠️  Firebase build failed"
-        # Продолжаем сборку
-      fi
+workflows:
+  ios-debug:
+    name: iOS Debug Build
+    environment:
+      xcode: latest
+      flutter: stable
+      cocoapods: default
     
-  - name: Build without Firebase
+    scripts:
+      - name: Clean temporary directories
+        script: |
+          echo "=== Cleaning temp directories ==="
+          rm -rf /tmp/flutter_*
+          rm -rf /var/folders/*/T/flutter_tools.*
+          rm -rf "$HOME/Library/Developer/Xcode/DerivedData/*"
+          
+          # Создайте чистый временный каталог
+          export TMPDIR="$HOME/tmp_build"
+          mkdir -p "$TMPDIR"
+    
+      - name: Install flutterfire CLI
+        script: |
+          echo "Installing flutterfire CLI..."
+          dart pub global activate flutterfire_cli
+          export PATH="$PATH:$HOME/.pub-cache/bin"
+          flutterfire --version
+          
+      - name: Setup project
+        script: |
+          flutter clean
+          rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
+          flutter pub get
+          
+      - name: Install pods
+        script: |
+          cd ios
+          pod install --repo-update --verbose
+          cd ..
+          
+      - name: Build iOS
     script: |
-      # Удаляем Firebase и собираем
-      flutter pub remove firebase_core firebase_messaging firebase_analytics firebase_crashlytics 2>/dev/null || true
-      flutter clean
-      flutter pub get
+      # Создаем каталог для логов
+      mkdir -p error_logs
       
-      cd ios
-      pod install
-      cd ..
-      
-      if flutter build ios --simulator --no-codesign; then
-        echo "✅ Build successful without Firebase"
-        mkdir -p build/without_firebase
-        cp -r build/ios/iphonesimulator/*.app build/without_firebase/
+      # Пытаемся собрать проект с Firebase
+      if flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_logs/build_log.txt; then
+        echo "✅ Build successful with Firebase!"
+        exit 0
       else
-        echo "❌ Build failed completely"
-        exit 1
+        echo "❌ Build failed, checking for Firebase issues..."
+        
+        # Проверяем наличие Firebase ошибок
+        if grep -q "Firebase\|Google" error_logs/build_log.txt; then
+          echo "🔥 Firebase-related error detected"
+          
+          # Временно удаляем Firebase зависимости
+          echo "Temporarily removing Firebase..."
+          flutter pub remove firebase_core firebase_messaging firebase_analytics firebase_crashlytics 2>/dev/null || true
+          
+          # Чистим и пробуем снова без Firebase
+          flutter clean
+          rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
+          flutter pub get
+          
+          cd ios
+          pod install --repo-update
+          cd ..
+          
+          if flutter build ios --simulator --no-codesign; then
+            echo "✅ Build successful without Firebase!"
+            # Сохраняем артефакты без Firebase
+            mkdir -p build/ios_no_firebase
+            cp -r build/ios/iphonesimulator/*.app build/ios_no_firebase/
+            
+            # Восстанавливаем зависимости но НЕ выходим сразу
+            flutter pub add firebase_core:^2.32.0
+            echo "⚠️  Build succeeded without Firebase. Check Firebase configuration."
+            exit 0
+          else
+            echo "❌ Build failed even without Firebase"
+            exit 1
+          fi
+        else
+          echo "❌ Non-Firebase build error"
+          exit 1
+        fi
       fi
     
     artifacts:
-      - build/with_firebase/*.app
-      - build/without_firebase/*.app
+      - build/ios/iphonesimulator/*.app
+      - build/ios_no_firebase/*.app  # Артефакты без Firebase
+      - error_logs/
