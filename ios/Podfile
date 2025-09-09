@@ -32,12 +32,12 @@ target 'Runner' do
   use_modular_headers!
 
   # Добавьте эти строки ДО flutter_install_all_ios_pods
-  pod 'FirebaseCore', '10.20.0'
-  pod 'FirebaseCoreInternal', '10.16.0'
-  pod 'FirebaseMessaging', '10.20.0'
-  pod 'FirebaseCrashlytics', '10.20.0'
-  pod 'FirebaseAnalytics', '10.20.0'
-  pod 'GoogleDataTransport', '9.2.0'
+  pod 'FirebaseCore', '11.15.0'
+  pod 'FirebaseCoreInternal', '11.15.0'
+  pod 'FirebaseMessaging', '11.15.0'
+  pod 'FirebaseCrashlytics', '11.15.0'
+  pod 'FirebaseAnalytics', '11.15.0'
+  pod 'GoogleDataTransport', '10.0'
 
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
 end
