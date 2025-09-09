@@ -6,7 +6,7 @@ workflows:
       flutter: stable
       node: 18.0.0
     
-  scripts:
+scripts:
     - name: Clean and setup
       script: |
           echo "=== Cleaning ==="
