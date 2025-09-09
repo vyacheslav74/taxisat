@@ -7,6 +7,9 @@ project 'Runner', {
   'Release' => :release,
 }
 
+ pod 'FirebaseAnalytics', '11.6.0'
+
+
 def flutter_root
   generated_xcode_build_settings_path = File.expand_path(File.join('..', 'Flutter', 'Generated.xcconfig'), __FILE__)
   unless File.exist?(generated_xcode_build_settings_path)
