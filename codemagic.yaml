@@ -88,5 +88,3 @@ workflows:
     
     artifacts:
       - build/ios/iphonesimulator/*.app
-      - build/ios_no_firebase/*.app
-      - error_logs/
