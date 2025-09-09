@@ -1,7 +1,4 @@
-# Uncomment this line to define a global platform for your project
 platform :ios, '14.0'
-
-# CocoaPods analytics sends network stats synchronously affecting flutter build latency.
 ENV['COCOAPODS_DISABLE_STATS'] = 'true'
 
 project 'Runner', {
@@ -28,25 +25,11 @@ require File.expand_path(File.join('packages', 'flutter_tools', 'bin', 'podhelpe
 flutter_ios_podfile_setup
 
 target 'Runner' do
-  use_frameworks!
+  use_frameworks! :linkage => :static  # Измените на static
   use_modular_headers!
 
-  # Добавьте эту строку для GoogleMaps
-  pod 'GoogleMaps', '~> 8.4'
-
-  # Добавьте эти строки ДО flutter_install_all_ios_pods
-  pod 'FirebaseCore', '11.15.0'
-  pod 'FirebaseCoreInternal', '11.15.0'
-  pod 'FirebaseMessaging', '11.15.0'
-  pod 'FirebaseCrashlytics', '11.15.0'
-  pod 'FirebaseAnalytics', '11.6.0'
-  pod 'GoogleDataTransport', '10.0'
-
+  # Уберите явные версии Firebase - пусть Flutter управляет ими
   flutter_install_all_ios_pods File.dirname(File.realpath(__FILE__))
-  
-  target 'RunnerTests' do
-    inherit! :search_paths
-  end
 end
 
 post_install do |installer|
@@ -55,15 +38,6 @@ post_install do |installer|
     target.build_configurations.each do |config|
       config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '14.0'
       config.build_settings['EXCLUDED_ARCHS[sdk=iphonesimulator*]'] = 'arm64'
-      
-      # Критически важные настройки для Firebase
-      config.build_settings['SWIFT_VERSION'] = '5.5'
-      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
     end
-  end
-
-  # Для всего проекта
-  installer.pods_project.build_configurations.each do |config|
-    config.build_settings['BUILD_LIBRARY_FOR_DISTRIBUTION'] = 'NO'
   end
 end
