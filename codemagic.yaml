@@ -40,19 +40,7 @@ workflows:
           pod install --repo-update || pod install
           cd ..
           
-      - name: Build with disabled firebase scripts
-        script: |
-          echo "=== Building for simulator ==="
-          
-          # Временно отключаем скрипты Firebase
-          cd ios
-          if [ -f "Podfile" ]; then
-            echo "Disabling Firebase scripts in Podfile..."
-            sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
-            # Создаем backup для отладки
-            cp Podfile Podfile.backup
-          fi
-          cd ..
+      
           
           # Сборка с подробным логированием
           flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
