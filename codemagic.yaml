@@ -9,14 +9,14 @@ workflows:
     scripts:
       - name: Enhanced clean
         script: |
-    echo "=== Enhanced Cleaning ==="
-    flutter clean
-    rm -rf ios/Pods
-    rm -rf ios/Podfile.lock
-    rm -rf ios/Runner.xcworkspace
-    rm -rf ~/Library/Developer/Xcode/DerivedData
-    pod cache clean --all
-    flutter pub get
+          echo "=== Enhanced Cleaning ==="
+          flutter clean
+          rm -rf ios/Pods
+          rm -rf ios/Podfile.lock
+          rm -rf ios/Runner.xcworkspace
+          rm -rf ~/Library/Developer/Xcode/DerivedData
+          pod cache clean --all
+          flutter pub get
           
       - name: Install flutterfire CLI
         script: |
