@@ -1,6 +1,6 @@
 workflows:
-  simulator-workflow:
-    name: Build for simulator
+  ios-release: 
+    name: iOS release
     environment:
       xcode: latest
       flutter: stable
