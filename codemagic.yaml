@@ -7,6 +7,14 @@ workflows:
       node: 18.0.0
     
     scripts:
+      - name: Environment setup check
+        script: |
+          echo "=== Checking Environment ==="
+          flutter --version
+          xcodebuild -version
+          pod --version || echo "CocoaPods not available"
+          node --version
+          
       - name: Enhanced clean
         script: |
           echo "=== Enhanced Cleaning ==="
@@ -15,7 +23,7 @@ workflows:
           rm -rf ios/Podfile.lock
           rm -rf ios/Runner.xcworkspace
           rm -rf ~/Library/Developer/Xcode/DerivedData
-          pod cache clean --all
+          pod cache clean --all || true
           flutter pub get
       
       - name: Install flutterfire CLI
@@ -23,37 +31,51 @@ workflows:
           echo "Installing flutterfire CLI..."
           dart pub global activate flutterfire_cli
           export PATH="$PATH:$HOME/.pub-cache/bin"
-          flutterfire --version
+          flutterfire --version || echo "Flutterfire not available"
           
-      - name: Setup project
+      - name: iOS dependencies setup
         script: |
-          flutter clean
-          flutter pub get
+          echo "=== Setting up iOS dependencies ==="
+          cd ios
+          pod install --repo-update || pod install
+          cd ..
           
       - name: Build with disabled firebase scripts
         script: |
+          echo "=== Building for simulator ==="
+          
           # Временно отключаем скрипты Firebase
           cd ios
           if [ -f "Podfile" ]; then
-            # Комментируем проблемные скрипты
+            echo "Disabling Firebase scripts in Podfile..."
             sed -i '' 's/^ *flutterfire/# flutterfire/g' Podfile 2>/dev/null || true
+            # Создаем backup для отладки
+            cp Podfile Podfile.backup
           fi
           cd ..
           
+          # Сборка с подробным логированием
           flutter build ios --simulator --no-codesign --verbose 2>&1 | tee error_log.txt
           
           mkdir -p error_logs
           cp error_log.txt error_logs/
           
-          # Правильный выход: проверяем успешность сборки
+          # Дополнительная диагностика при неудаче
           if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
             echo "✅ Build successful!"
+            echo "App size: $(du -sh build/ios/iphonesimulator/Runner.app)"
             exit 0
           else
             echo "❌ Build failed"
+            echo "=== Error analysis ==="
+            grep -i "error:" error_log.txt | head -10 || echo "No explicit errors found in log"
+            grep -i "failed" error_log.txt | head -5 || true
+            echo "=== Last lines of log ==="
+            tail -20 error_log.txt
             exit 1
           fi
     
     artifacts:
       - build/ios/iphonesimulator/*.app
       - error_logs/
+      - ios/Podfile.backup
