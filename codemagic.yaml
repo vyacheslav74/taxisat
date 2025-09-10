@@ -117,5 +117,3 @@ workflows:
     
     artifacts:
       - build/ios/ipa/Runner.ipa
-      - build/ios/archive/Runner.xcarchive
-      - appstore_build_log.txt
