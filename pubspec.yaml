@@ -51,10 +51,10 @@ dependencies:
 
   # Firebase
    # ЗАКОММЕНТИРУЙТЕ ВСЕ Firebase временно:
-  # firebase_core: ^2.32.0
-  # firebase_messaging: ^14.7.0
-  # firebase_analytics: ^11.3.6
-  # firebase_crashlytics: ^4.2.0
+  firebase_core: ^2.32.0
+  firebase_messaging: ^14.7.0
+  firebase_analytics: ^11.3.6
+  firebase_crashlytics: ^4.2.0
 
 
   # UI
