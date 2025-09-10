@@ -7,14 +7,16 @@ workflows:
       node: 18.0.0
     
     scripts:
-      - name: Clean and setup
+      - name: Enhanced clean
         script: |
-          echo "=== Cleaning ==="
-          rm -rf /tmp/flutter_*
-          rm -rf /var/folders/*/T/flutter_tools.*
-          flutter clean
-          rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
-          flutter pub get
+    echo "=== Enhanced Cleaning ==="
+    flutter clean
+    rm -rf ios/Pods
+    rm -rf ios/Podfile.lock
+    rm -rf ios/Runner.xcworkspace
+    rm -rf ~/Library/Developer/Xcode/DerivedData
+    pod cache clean --all
+    flutter pub get
           
       - name: Install flutterfire CLI
         script: |
