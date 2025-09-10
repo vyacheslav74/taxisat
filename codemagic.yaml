@@ -1,6 +1,6 @@
 workflows:
-  ios-debug:
-    name: iOS Debug Build
+  simulator-workflow:
+    name: Build for simulator
     environment:
       xcode: latest
       flutter: stable
@@ -17,13 +17,7 @@ workflows:
           rm -rf ~/Library/Developer/Xcode/DerivedData
           pod cache clean --all
           flutter pub get
-
-      - name: Update CocoaPods
-        script: |
-          sudo gem install cocoapods
-          pod setup
-          pod install --repo-update
-          
+      
       - name: Install flutterfire CLI
         script: |
           echo "Installing flutterfire CLI..."
