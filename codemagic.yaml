@@ -1,5 +1,5 @@
 workflows:
-  appstore-workflow:
+   ios-app-store:
     name: iOS App Store Build
     environment:
       xcode: latest
