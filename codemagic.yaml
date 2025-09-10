@@ -7,7 +7,7 @@ workflows:
       node: 18.0.0
     
     # Переменные окружения (добавить в настройках CI)
-    env:
+      vars:
       APP_STORE_CONNECT_TEAM_ID: $APP_STORE_CONNECT_TEAM_ID
       APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID
       APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
