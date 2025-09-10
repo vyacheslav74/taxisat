@@ -1,74 +1,121 @@
 workflows:
-  ios-release: 
-    name: iOS release
+  appstore-workflow:
+    name: iOS App Store Build
     environment:
       xcode: latest
       flutter: stable
       node: 18.0.0
     
+    # Переменные окружения (добавить в настройках CI)
+    env:
+      APP_STORE_CONNECT_TEAM_ID: $APP_STORE_CONNECT_TEAM_ID
+      APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID
+      APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
+      APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
+      BUNDLE_IDENTIFIER: com.yourcompany.yourapp
+      APP_STORE_APPLE_ID: $APP_STORE_APPLE_ID
+    
     scripts:
-      - name: Environment setup check
+      - name: Environment setup
         script: |
-          echo "=== Checking Environment ==="
+          echo "=== Setting up App Store environment ==="
           flutter --version
           xcodebuild -version
-          pod --version || echo "CocoaPods not available"
-          node --version
           
-      - name: Enhanced clean
+      - name: Clean and prepare
         script: |
-          echo "=== Enhanced Cleaning ==="
+          echo "=== Cleaning workspace ==="
           flutter clean
-          rm -rf ios/Pods
-          rm -rf ios/Podfile.lock
-          rm -rf ios/Runner.xcworkspace
-          rm -rf ~/Library/Developer/Xcode/DerivedData
-          pod cache clean --all || true
+          rm -rf ios/Pods ios/Podfile.lock ios/Runner.xcworkspace
           flutter pub get
-      
-      - name: Install flutterfire CLI
-        script: |
-          echo "Installing flutterfire CLI..."
-          dart pub global activate flutterfire_cli
-          export PATH="$PATH:$HOME/.pub-cache/bin"
-          flutterfire --version || echo "Flutterfire not available"
           
-      - name: iOS dependencies setup
+      - name: iOS dependencies
         script: |
-          echo "=== Setting up iOS dependencies ==="
+          echo "=== Installing iOS dependencies ==="
           cd ios
-          pod install --repo-update || pod install
+          pod install --repo-update
           cd ..
           
-      
+      - name: Configure code signing
+        script: |
+          echo "=== Configuring code signing ==="
           
+          # Создаем папку для профилей
+          mkdir -p ~/Library/MobileDevice/Provisioning\ Profiles
           
-          flutter build ios \
+          # Автоматическая подпись через App Store Connect API
+          if [ -n "$APP_STORE_CONNECT_PRIVATE_KEY" ]; then
+            echo "Using App Store Connect API for code signing"
+            
+            # Создаем файл приватного ключа
+            echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/private_key.p8
+            
+            # Настраиваем автоматическую подпись в Xcode
+            /usr/libexec/PlistBuddy -c "Set :method app-store" ios/ExportOptions.plist 2>/dev/null || \
+            echo '<?xml version="1.0" encoding="UTF-8"?>
+            <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+            <plist version="1.0">
+            <dict>
+                <key>method</key>
+                <string>app-store</string>
+                <key>teamID</key>
+                <string>'"$APP_STORE_CONNECT_TEAM_ID"'</string>
+                <key>uploadBitcode</key>
+                <false/>
+                <key>uploadSymbols</key>
+                <true/>
+            </dict>
+            </plist>' > ios/ExportOptions.plist
+          fi
+          
+      - name: Build App Store archive
+        script: |
+          echo "=== Building App Store archive ==="
+          
+          # Сборка архива для App Store
+          flutter build ipa \
             --release \
-            --no-codesign \
-            --target=lib/main_production.dart \
+            --export-options-plist=ios/ExportOptions.plist \
+            --dart-define=APP_STORE=true \
             --dart-define=ENV=production \
-            --verbose
+            --verbose 2>&1 | tee appstore_build_log.txt
           
-          mkdir -p error_logs
-          cp error_log.txt error_logs/
+      - name: Verify archive
+        script: |
+          echo "=== Verifying App Store archive ==="
           
-          # Дополнительная диагностика при неудаче
-          if [ -d "build/ios/iphonesimulator/Runner.app" ]; then
-            echo "✅ Build successful!"
-            echo "App size: $(du -sh build/ios/iphonesimulator/Runner.app)"
+          if [ -f "build/ios/ipa/Runner.ipa" ]; then
+            echo "✅ IPA file created successfully"
+            echo "File size: $(du -h build/ios/ipa/Runner.ipa)"
+            
+            # Проверяем содержимое IPA
+            unzip -l build/ios/ipa/Runner.ipa | grep Payload/Runner.app/Runner
             exit 0
           else
-            echo "❌ Build failed"
-            echo "=== Error analysis ==="
-            grep -i "error:" error_log.txt | head -10 || echo "No explicit errors found in log"
-            grep -i "failed" error_log.txt | head -5 || true
-            echo "=== Last lines of log ==="
-            tail -20 error_log.txt
+            echo "❌ IPA file not found"
+            echo "Build directory contents:"
+            ls -la build/ios/ || true
+            ls -la build/ios/ipa/ || true
             exit 1
+          fi
+          
+      - name: Upload to App Store (optional)
+        script: |
+          echo "=== Uploading to App Store Connect ==="
+          
+          # Используем altool или xcodebuild для загрузки
+          if command -v xcrun &> /dev/null; then
+            xcrun altool --upload-app \
+              -f build/ios/ipa/Runner.ipa \
+              -u "$APP_STORE_APPLE_ID" \
+              -p "@keychain:APP_STORE_CONNECT_API_KEY" \
+              --verbose
+          else
+            echo "⚠️ altool not available, skipping upload"
+            echo "IPA file is ready for manual upload to App Store Connect"
           fi
     
     artifacts:
-      - build/ios/iphonesimulator/*.app
-      - error_logs/
-      - ios/Podfile.backup
+      - build/ios/ipa/Runner.ipa
+      - build/ios/archive/Runner.xcarchive
+      - appstore_build_log.txt
