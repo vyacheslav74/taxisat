@@ -79,22 +79,6 @@ workflows:
             --dart-define=APP_STORE=true \
             --dart-define=ENV=production \
             --verbose 2>&1 | tee appstore_build_log.txt
-          
-      - name: Upload to App Store (optional)
-        script: |
-          echo "=== Uploading to App Store Connect ==="
-          
-          # Используем altool или xcodebuild для загрузки
-          if command -v xcrun &> /dev/null; then
-            xcrun altool --upload-app \
-              -f build/ios/ipa/Runner.ipa \
-              -u "$APP_STORE_APPLE_ID" \
-              -p "@keychain:APP_STORE_CONNECT_API_KEY" \
-              --verbose
-          else
-            echo "⚠️ altool not available, skipping upload"
-            echo "IPA file is ready for manual upload to App Store Connect"
-          fi
     
     artifacts:
       - build/ios/ipa/Runner.ipa
