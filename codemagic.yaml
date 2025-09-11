@@ -1,5 +1,5 @@
 workflows:
-   ios-app-store:
+  ios-app-store:
     name: iOS App Store Build
     environment:
       xcode: latest
@@ -7,13 +7,13 @@ workflows:
       node: 18.0.0
     
     # Переменные окружения (добавить в настройках CI)
-      vars:
-       APP_STORE_CONNECT_TEAM_ID: $APP_STORE_CONNECT_TEAM_ID
-       APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID
-       APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
-       APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
-       BUNDLE_IDENTIFIER: com.yourcompany.yourapp
-       APP_STORE_APPLE_ID: $APP_STORE_APPLE_ID
+    vars:
+      APP_STORE_CONNECT_TEAM_ID: $APP_STORE_CONNECT_TEAM_ID
+      APP_STORE_CONNECT_KEY_ID: $APP_STORE_CONNECT_KEY_ID
+      APP_STORE_CONNECT_ISSUER_ID: $APP_STORE_CONNECT_ISSUER_ID
+      APP_STORE_CONNECT_PRIVATE_KEY: $APP_STORE_CONNECT_PRIVATE_KEY
+      BUNDLE_IDENTIFIER: com.yourcompany.yourapp
+      APP_STORE_APPLE_ID: $APP_STORE_APPLE_ID
     
     scripts:
       - name: Environment setup
@@ -50,6 +50,9 @@ workflows:
             # Создаем файл приватного ключа
             echo "$APP_STORE_CONNECT_PRIVATE_KEY" > ~/private_key.p8
             
+            # Создаем ключ в keychain
+            security import ~/private_key.p8 -k ~/Library/Keychains/login.keychain -T /usr/bin/codesign
+            
             # Настраиваем автоматическую подпись в Xcode
             /usr/libexec/PlistBuddy -c "Set :method app-store" ios/ExportOptions.plist 2>/dev/null || \
             echo '<?xml version="1.0" encoding="UTF-8"?>
@@ -68,17 +71,28 @@ workflows:
             </plist>' > ios/ExportOptions.plist
           fi
           
-      - name: Build App Store archive
+      - name: Build iOS app
         script: |
-          echo "=== Building App Store archive ==="
-          
-          # Сборка архива для App Store
-          flutter build ios
-            --release \
-            --export-options-plist=ios/ExportOptions.plist \
+          echo "=== Building iOS app ==="
+          flutter build ios --release \
             --dart-define=APP_STORE=true \
-            --dart-define=ENV=production \
-            --verbose 2>&1 | tee appstore_build_log.txt
+            --dart-define=ENV=production
+          
+      - name: Create IPA archive
+        script: |
+          echo "=== Creating IPA archive ==="
+          cd ios
+          xcodebuild -workspace Runner.xcworkspace \
+            -scheme Runner \
+            -configuration Release \
+            -archivePath build/Runner.xcarchive \
+            archive
+          
+          xcodebuild -exportArchive \
+            -archivePath build/Runner.xcarchive \
+            -exportOptionsPlist ExportOptions.plist \
+            -exportPath build/ios/ipa \
+            -allowProvisioningUpdates
     
     artifacts:
       - build/ios/ipa/Runner.ipa
