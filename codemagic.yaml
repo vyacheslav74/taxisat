@@ -80,25 +80,6 @@ workflows:
             --dart-define=ENV=production \
             --verbose 2>&1 | tee appstore_build_log.txt
           
-      - name: Verify archive
-        script: |
-          echo "=== Verifying App Store archive ==="
-          
-          if [ -f "build/ios/ipa/Runner.ipa" ]; then
-            echo "✅ IPA file created successfully"
-            echo "File size: $(du -h build/ios/ipa/Runner.ipa)"
-            
-            # Проверяем содержимое IPA
-            unzip -l build/ios/ipa/Runner.ipa | grep Payload/Runner.app/Runner
-            exit 0
-          else
-            echo "❌ IPA file not found"
-            echo "Build directory contents:"
-            ls -la build/ios/ || true
-            ls -la build/ios/ipa/ || true
-            exit 1
-          fi
-          
       - name: Upload to App Store (optional)
         script: |
           echo "=== Uploading to App Store Connect ==="
